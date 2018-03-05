@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html charset=utf-8">
+<title>Login Page</title>
+<meta charset="UTF-8">
+<script type="text/javascript" src="js/jquery-3.1.1.js"></script>
+<script type="text/javascript" src="js/submit_script.js"></script>
+<script type="text/javascript" src="js/edit_page_to_reg_script.js"></script>
+<link href="css/login.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+	<form>
+		<div class="center">
+			<h1 id="HeadOfLoginPage">Страница авторизации</h1>
+		</div>
+		<div class="center">
+			<input type="radio" id="AuthorizationRadio" value="Authorization" name="auth" onclick="doAuthorizationForm()"> <label for="AuthorizationRadio">Авторизация</label>
+			<input type="radio" id="RegistrationRadio" value="Registration"	name="auth" onclick="doRegistrationForm()"> <label for="RegistrationRadio">Регистрация</label>
+		</div>
+		<div class="center">
+			<table align="center" id="FormTable">
+				<tr id="LoginMemeber">
+					<td align="left">Login:</td>
+					<td align="left"><input type="email" maxlength="20" minlength="8" autofocus="autofocus" name="LoginMemeber"
+						placeholder="chat@chat.ru" required /></td>
+				</tr>
+				<tr id="PasswordMember">
+					<td align="left">Password:</td>
+					<td align="left"><input type="password" maxlength="20" minlength="8" name="PasswordMember" required /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td align="left"><input type="submit" value="Submit" formmethod="get" formaction="/ChatOnServlet/chat/" /></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+</body>
+</html>
