@@ -1,3 +1,9 @@
+--Через командную строку.
+createuser -PE testov
+createdb -O testov -E 'UTF-8' testdb
+--Через psql
+create database testdb WITH OWNER = testov ENCODING = 'UTF8';
+
 create table principal (
 	email		char(255) UNIQUE NOT NULL,
 	password	char(255) NOT NULL,

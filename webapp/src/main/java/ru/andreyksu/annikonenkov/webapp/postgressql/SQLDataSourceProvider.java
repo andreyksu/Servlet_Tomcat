@@ -9,26 +9,26 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SQLDataSourcePoolConnection {
+public class SQLDataSourceProvider {
 
-	private static final Logger _log = LogManager.getLogger(SQLDataSourcePoolConnection.class);
+	private static final Logger _log = LogManager.getLogger(SQLDataSourceProvider.class);
 
-	private static SQLDataSourcePoolConnection _sqlConnection = null;
+	private static SQLDataSourceProvider _sqlDataSourceProvider = null;
 
 	private DataSource _dataSource = null;
 
-	private SQLDataSourcePoolConnection() {}
+	private SQLDataSourceProvider() {}
 
 	/**
 	 * Статический метод, для создания данного класса, который является
 	 * Singleton
 	 */
-	public static synchronized SQLDataSourcePoolConnection getSQLDataSource() {
-		if (_sqlConnection == null) {
-			_sqlConnection = new SQLDataSourcePoolConnection();
-			return _sqlConnection;
+	public static synchronized SQLDataSourceProvider getSQLDataSource() {
+		if (_sqlDataSourceProvider == null) {
+			_sqlDataSourceProvider = new SQLDataSourceProvider();
+			return _sqlDataSourceProvider;
 		} else {
-			return _sqlConnection;
+			return _sqlDataSourceProvider;
 		}
 	}
 
@@ -39,7 +39,7 @@ public class SQLDataSourcePoolConnection {
 	 */
 
 	private DataSource getInnerDataSource() throws SQLException, NamingException {
-		_log.info("Фомируем InitialContext");
+		_log.info("Фомируем InitialContext в методе getInnerDataSource()");
 		InitialContext initalContext = new InitialContext();
 		_log.info("Выполняем lookup JNDI для базы данных");
 		return (DataSource) initalContext.lookup("java:/comp/env/jdbc/postgres");
@@ -53,14 +53,13 @@ public class SQLDataSourcePoolConnection {
 	 * @throws SQLException
 	 * @throws NamingException
 	 */
-	// TODO:Вероятно стоит обернуть в synchronized только блок проверки на null и создания класса т.е. создание if
 	public synchronized DataSource getDataSource() throws SQLException, NamingException {
 		if (_dataSource == null) {
 			_dataSource = getInnerDataSource();
-			_log.info("Возвращаем DataSource из класса SQLConnection");
+			_log.info("Возвращаем DataSource из класса SQLConnection - первая инициализация");
 			return _dataSource;
 		} else {
-			_log.info("Возвращаем DataSource из класса SQLConnection");
+			_log.info("Возвращаем DataSource из класса SQLConnection - уже проинициализирвоали ранее");
 			return _dataSource;
 		}
 	}
