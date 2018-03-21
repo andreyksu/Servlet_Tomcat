@@ -2,12 +2,12 @@ package ru.andreyksu.annikonenkov.webapp.filters;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Map;
 
 import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -19,40 +19,38 @@ import org.apache.logging.log4j.Logger;
 
 import ru.andreyksu.annikonenkov.webapp.authorization.Authorization;
 import ru.andreyksu.annikonenkov.webapp.authorization.IAuthorization;
-import ru.andreyksu.annikonenkov.webapp.postgressql.SQLDataSourceProvider;
-import ru.andreyksu.annikonenkov.webapp.worker.WorkerCookies;
+import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
+import ru.andreyksu.annikonenkov.webapp.worker.SetterAndDeleterCookies;
 
 public class SecondFilter implements Filter {
 
 	private static final Logger _log = LogManager.getLogger(SecondFilter.class);
 
-	private static DataSource _dataSourcel;
+	private static Map<String, String> _mapOfAuthUser;
 
-	private static IAuthorization authorization;
+	private static DataSource _dataSourcel;
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		_log.info("-----Init of Filter2");
+		_log.debug("___Filter2___Init");
 		try {
-			_dataSourcel = SQLDataSourceProvider.getSQLDataSource().getDataSource();
-			authorization = new Authorization(_log, _dataSourcel);
+			DataSourceProvider dataSP = DataSourceProvider.getSQLDataSource();
+			_dataSourcel = dataSP.getDataSource();
+			_mapOfAuthUser = dataSP.getMapAuthUser();
 		} catch (SQLException | NamingException e) {
 			_log.error("Произошла ошибка при создании/получении DataSource, для PoolConnection", e);
 			throw new RuntimeException(e);
 		}
-		_log.info("Успешно проинициализирован метод init класса FirstFilter");
 	}
 
-	// TODO: Вынести константы пока в Interface, потом сделать чтение из конфига
-	// или properties
-	
-	//TODO: Продумать про админку. Возмжно будет работа с отдельным фильтром/сервлетом минуя текущие-основные.
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		_log.info("-----DoFilter of Filter2");
-		WorkerCookies workerCookies = new WorkerCookies();
-		String mainParam = request.getParameter("auth");
+		_log.debug("___Filter2___DoFilter");
+		String mainParam = request.getParameter("mode");
 		if (mainParam != null) {
+			_log.debug("___Filter2___ mode != null");
+			IAuthorization authorization = new Authorization(_log, _dataSourcel, _mapOfAuthUser);
+			SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies(_log);
 			if (mainParam.equals("Authorization")) {
 				String email = request.getParameter("LoginMemeber");
 				String password = request.getParameter("PasswordMember");
@@ -60,10 +58,12 @@ public class SecondFilter implements Filter {
 					workerCookies.setCookies((HttpServletResponse) response, email);
 					chain.doFilter(request, response);
 				} else {
-					RequestDispatcher requestDispatcher = request.getRequestDispatcher("/html/errorAuthPage.html");
-					requestDispatcher.forward(request, response);
+					_log.debug("___Filter2___sendRedirect---Authorization");
+					HttpServletResponse tmp = (HttpServletResponse) response;
+					tmp.sendRedirect("/ChatOnServlet/html/errorAuthPage.html");
 				}
-			} else if (mainParam.equals("Registration")) {
+			}
+			if (mainParam.equals("Registration")) {
 				String email = request.getParameter("LoginMemeber");
 				String password = request.getParameter("PasswordMember");
 				String name = request.getParameter("NameMember");
@@ -72,26 +72,46 @@ public class SecondFilter implements Filter {
 					workerCookies.setCookies((HttpServletResponse) response, email);
 					chain.doFilter(request, response);
 				} else {
-					RequestDispatcher requestDispatcher = request.getRequestDispatcher("/html/errorRegPage.html");
-					requestDispatcher.forward(request, response);
+					_log.debug("___Filter2___sendRedirect---Registration");
+					HttpServletResponse tmp = (HttpServletResponse) response;
+					tmp.sendRedirect("/ChatOnServlet/html/errorRegPage.html");
 				}
-			} else if (mainParam.equals("Message")) {
+			}
+			if (mainParam.equals("Message")) {
 				String email = request.getParameter("LoginMemeber");
+				_log.debug(String.format("email = %s", email));
 				if (authorization.isAuthorizedUser(email)) {
+					workerCookies.setCookies((HttpServletResponse) response, email);
 					chain.doFilter(request, response);
+				} else {
+					_log.debug("___Filter2___sendRedirect---Message");
+					HttpServletResponse tmp = (HttpServletResponse) response;
+					tmp.sendRedirect("/ChatOnServlet/loginPage.html");
 				}
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/loginPage.html");
-				requestDispatcher.forward(request, response);
+			}
+			if (mainParam.equals("UnLogin")) {
+				String email = request.getParameter("LoginMemeber");
+				authorization.unAuthorizedUser(email);
+				workerCookies.deleteCookies((HttpServletResponse) response, email);
+				_log.debug("___Filter2___sendRedirect---UnLogin");
+				HttpServletResponse tmp = (HttpServletResponse) response;
+				tmp.sendRedirect("/ChatOnServlet/loginPage.html");
 			}
 		} else {
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("/err404.html");
-			requestDispatcher.forward(request, response);
+			_log.debug("___Filter2___sendRedirect                mainParam==null");
+			HttpServletResponse tmp = (HttpServletResponse) response;
+			tmp.sendRedirect("/ChatOnServlet/err404.html");
+
+			// RequestDispatcher requestDispatcher =
+			// request.getRequestDispatcher("/err404.html");
+			// requestDispatcher.forward(request, response);
+
 		}
 	}
 
 	@Override
 	public void destroy() {
-		_log.info("-----Destroy of Filter2");
+		_log.info("___Filter2___Destroy");
 	}
 
 }

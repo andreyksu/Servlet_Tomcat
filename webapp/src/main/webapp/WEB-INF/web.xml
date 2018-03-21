@@ -15,8 +15,9 @@
 		<filter-class>ru.andreyksu.annikonenkov.webapp.filters.SecondFilter</filter-class>
 	</filter>
 
-	<!-- Порядок вызыовов фильтров будет соответствовать порядку описанному 
-		в данном файле -->
+	<!-- Порядок вызывов фильтров будет соответствовать порядку(последовательности) 
+		описанному в данном файле -->
+
 	<filter-mapping>
 		<filter-name>firstFilter</filter-name>
 		<servlet-name>mainServlet</servlet-name>

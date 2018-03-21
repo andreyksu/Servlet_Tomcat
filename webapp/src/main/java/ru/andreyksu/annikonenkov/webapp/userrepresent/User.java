@@ -55,7 +55,7 @@ public class User implements IUser {
 	 */
 	@Override
 	public boolean isExistUserInSystem() throws IOException {
-		_log.debug("Проверка наличия пользовтеля в БД");
+		_log.debug("Проверка наличия пользовтеля в БД User.isExistUserInSystem()");
 		if (!isValidUserForQuery(_email))
 			return false;
 		try (Connection connection = _dataSourcel.getConnection();
@@ -82,7 +82,7 @@ public class User implements IUser {
 	 */
 	@Override
 	public String getPassword() throws IOException {
-		_log.debug("Возвращаем Пароль пользователя!");
+		_log.debug("Ищем пароль для созданного пользователя! ");
 		if (resultOfCheckExistUser.get("password") == null) {
 			if (!isExistUserInSystem())
 				return null;
@@ -102,7 +102,7 @@ public class User implements IUser {
 	 */
 	@Override
 	public String getName() throws IOException {
-		_log.debug("Возвращаем Имя пользователя!");
+		_log.debug("Ищем пароль для созданного пользователя!");
 		if (resultOfCheckExistUser.get("name") == null) {
 			if (!isExistUserInSystem())
 				return null;
@@ -112,7 +112,7 @@ public class User implements IUser {
 
 	@Override
 	public String getData() throws IOException {
-		_log.debug("Возвращаем дату регистрации пользователя!");
+		_log.debug("Ищем пароль для созданного пользователя!");
 		if (resultOfCheckExistUser.get("regdata") == null) {
 			if (!isExistUserInSystem())
 				return null;
@@ -181,8 +181,8 @@ public class User implements IUser {
 			preparedStatement.setString(1, _email);
 			preparedStatement.setString(2, password);
 			preparedStatement.setString(3, name);
-			int count = preparedStatement.executeUpdate();
-			_log.debug(String.format("Удалось вставить количество =%4d записей, при регистрации пользователя", count));
+			preparedStatement.executeUpdate();
+			_log.debug("Запись успешно добавлена");
 		} catch (SQLException e) {
 			_log.error("Ошибка при добавлениии пользователя", e);
 			throw new IOException(e);
@@ -216,8 +216,8 @@ public class User implements IUser {
 				PreparedStatement preparedStatement = connection.prepareStatement("UPDATE principal SET isactive = ? where email=?")) {
 			preparedStatement.setString(1, status);
 			preparedStatement.setString(2, _email);
-			int count = preparedStatement.executeUpdate();
-			_log.debug(String.format("Удалось изменить =%4d записей, при изменении пользователей", count));
+			preparedStatement.executeUpdate();
+			_log.debug(String.format("Запись '%s' успешно обновлена", _email));
 		} catch (SQLException e) {
 			_log.error("Ошибка при изменении записи пользователя Поле 'isactive' .", e);
 			throw new IOException(e);
@@ -265,7 +265,7 @@ public class User implements IUser {
 	 * {@link #isExistUserInSystem(String email)}
 	 */
 	private int setResultOfQueryExistUser(ResultSet result) throws SQLException {
-		_log.debug("Помещаем результат запроса 'Существует пользователь в системе' во внутренний Map в методе setResultOfQueryExistUser");
+		_log.debug("Помещаем результат запроса во внутренний Map в методе setResultOfQueryExistUser");
 		int count = 0;
 		while (result.next()) {
 			resultOfCheckExistUser.put("email", result.getString("email").trim());
@@ -296,14 +296,14 @@ public class User implements IUser {
 	 */
 
 	private boolean isValidUserForQuery(String email) {
-		_log.debug("Проверяем валидность email");
+		_log.debug("Проверяем валидность email на длину и на null!");
 		if ((email == null || email.length() < minLenght || email.length() > maxLenght))
 			return false;
 		return true;
 	}
 
 	private boolean isValidPasswordAndName(String password, String name) {
-		_log.debug("Проверяем валидность Password и Name");
+		_log.debug("Проверяем валидность Password и Name на длину и на null!");
 		if ((password == null || password.length() < minLenght || password.length() > maxLenght))
 			return false;
 		if ((name == null || name.length() < minLenght || name.length() > maxLenght))

@@ -1,6 +1,9 @@
 package ru.andreyksu.annikonenkov.webapp.postgressql;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -9,23 +12,25 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SQLDataSourceProvider {
+public class DataSourceProvider {
 
-	private static final Logger _log = LogManager.getLogger(SQLDataSourceProvider.class);
+	private static final Logger _log = LogManager.getLogger(DataSourceProvider.class);
 
-	private static SQLDataSourceProvider _sqlDataSourceProvider = null;
+	private final static Map<String, String> _mapOfAuthUser = Collections.synchronizedMap(new HashMap<String, String>());
+
+	private static DataSourceProvider _sqlDataSourceProvider = null;
 
 	private DataSource _dataSource = null;
 
-	private SQLDataSourceProvider() {}
+	private DataSourceProvider() {}
 
 	/**
 	 * Статический метод, для создания данного класса, который является
 	 * Singleton
 	 */
-	public static synchronized SQLDataSourceProvider getSQLDataSource() {
+	public static synchronized DataSourceProvider getSQLDataSource() {
 		if (_sqlDataSourceProvider == null) {
-			_sqlDataSourceProvider = new SQLDataSourceProvider();
+			_sqlDataSourceProvider = new DataSourceProvider();
 			return _sqlDataSourceProvider;
 		} else {
 			return _sqlDataSourceProvider;
@@ -62,5 +67,9 @@ public class SQLDataSourceProvider {
 			_log.info("Возвращаем DataSource из класса SQLConnection - уже проинициализирвоали ранее");
 			return _dataSource;
 		}
+	}
+
+	public Map<String, String> getMapAuthUser() {
+		return _mapOfAuthUser;
 	}
 }

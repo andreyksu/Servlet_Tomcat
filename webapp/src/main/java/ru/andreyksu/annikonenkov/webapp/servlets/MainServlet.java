@@ -26,24 +26,24 @@ public class MainServlet extends HttpServlet {
 	 */
 	@Override
 	public void init() throws ServletException {
-		_log.info("-------Init_MainServlet");
+		_log.info("___MainServlet___Init");
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		_log.info("-----DoFirst of MainServlet");
+		_log.info("___MainServlet___DoFirst");
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/html/messagePage.html");
 		requestDispatcher.forward(request, response);
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		_log.info("-------DoPost_MainServlet");
+		_log.info("___MainServlet___DoPost");
 	}
 
 	@Override
 	public void destroy() {
-		_log.info("-------Destroy_MainServlet");
+		_log.info("___MainServlet___Destroy");
 	}
 
 }
