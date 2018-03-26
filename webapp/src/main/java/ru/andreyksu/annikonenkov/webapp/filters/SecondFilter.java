@@ -21,97 +21,110 @@ import ru.andreyksu.annikonenkov.webapp.authorization.Authorization;
 import ru.andreyksu.annikonenkov.webapp.authorization.IAuthorization;
 import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
 import ru.andreyksu.annikonenkov.webapp.worker.SetterAndDeleterCookies;
+import ru.andreyksu.annikonenkov.webapp.wrappers.WrapperMutableHttpServletRequest;
 
 public class SecondFilter implements Filter {
 
-	private static final Logger _log = LogManager.getLogger(SecondFilter.class);
+	private static final Logger ___log = LogManager.getLogger(SecondFilter.class);
 
 	private static Map<String, String> _mapOfAuthUser;
 
 	private static DataSource _dataSourcel;
 
+	private static final String _loginMember = "LoginMemeber";
+
+	private static final String _passwordMember = "PasswordMember";
+
+	private static final String _nameMember = "NameMember";
+
+	private static final String _authorization = "Authorization";
+
+	private static final String _registration = "Registration";
+
+	private static final String _message = "Message";
+
+	private static final String _unLogin = "UnLogin";
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		_log.debug("___Filter2___Init");
+		___log.debug("___Filter2___Init");
 		try {
 			DataSourceProvider dataSP = DataSourceProvider.getSQLDataSource();
 			_dataSourcel = dataSP.getDataSource();
 			_mapOfAuthUser = dataSP.getMapAuthUser();
 		} catch (SQLException | NamingException e) {
-			_log.error("Произошла ошибка при создании/получении DataSource, для PoolConnection", e);
+			___log.error("Произошла ошибка при создании/получении DataSource, для PoolConnection", e);
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		_log.debug("___Filter2___DoFilter");
+		___log.debug("___Filter2___DoFilter");
 		String mainParam = request.getParameter("mode");
 		if (mainParam != null) {
-			_log.debug("___Filter2___ mode != null");
-			IAuthorization authorization = new Authorization(_log, _dataSourcel, _mapOfAuthUser);
-			SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies(_log);
-			if (mainParam.equals("Authorization")) {
-				String email = request.getParameter("LoginMemeber");
-				String password = request.getParameter("PasswordMember");
+			___log.debug(String.format("___Filter2___ mode = %s", mainParam));
+			IAuthorization authorization = new Authorization(___log, _dataSourcel, _mapOfAuthUser);
+			SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies(___log);
+			if (mainParam.equals(_authorization)) {
+				String email = request.getParameter(_loginMember);
+				String password = request.getParameter(_passwordMember);
+				___log.debug(String.format("___Filter2___ LoginMemeber = %s  PasswordMember = %s", email, password));
 				if (authorization.authorizedInSystem(email, password)) {
 					workerCookies.setCookies((HttpServletResponse) response, email);
 					chain.doFilter(request, response);
 				} else {
-					_log.debug("___Filter2___sendRedirect---Authorization");
+					___log.debug("___Filter2___редиректимся в Authorization");
 					HttpServletResponse tmp = (HttpServletResponse) response;
 					tmp.sendRedirect("/ChatOnServlet/html/errorAuthPage.html");
 				}
 			}
-			if (mainParam.equals("Registration")) {
-				String email = request.getParameter("LoginMemeber");
-				String password = request.getParameter("PasswordMember");
-				String name = request.getParameter("NameMember");
+			if (mainParam.equals(_registration)) {
+				String email = request.getParameter(_loginMember);
+				String password = request.getParameter(_passwordMember);
+				String name = request.getParameter(_nameMember);
+				___log.debug(String.format("___Filter2___ LoginMemeber = %s  PasswordMember = %s  NameMember = %s", email, password, name));
 				if (authorization.registrate(email, password, name)) {
 					authorization.authorizedInSystem(email, password);
 					workerCookies.setCookies((HttpServletResponse) response, email);
 					chain.doFilter(request, response);
 				} else {
-					_log.debug("___Filter2___sendRedirect---Registration");
+					___log.debug("___Filter2___редиректимся в Registration");
 					HttpServletResponse tmp = (HttpServletResponse) response;
 					tmp.sendRedirect("/ChatOnServlet/html/errorRegPage.html");
 				}
 			}
-			if (mainParam.equals("Message")) {
-				String email = request.getParameter("LoginMemeber");
-				_log.debug(String.format("email = %s", email));
+			if (mainParam.equals(_message)) {
+				WrapperMutableHttpServletRequest wrappedRequest = (WrapperMutableHttpServletRequest) request;
+				String email = wrappedRequest.getHeader(_loginMember);
+				___log.debug(String.format("LoginMemeber = %s", email));
 				if (authorization.isAuthorizedUser(email)) {
 					workerCookies.setCookies((HttpServletResponse) response, email);
 					chain.doFilter(request, response);
 				} else {
-					_log.debug("___Filter2___sendRedirect---Message");
+					___log.debug("___Filter2___редиректимся в Message");
 					HttpServletResponse tmp = (HttpServletResponse) response;
 					tmp.sendRedirect("/ChatOnServlet/loginPage.html");
 				}
 			}
-			if (mainParam.equals("UnLogin")) {
-				String email = request.getParameter("LoginMemeber");
+			if (mainParam.equals(_unLogin)) {
+				String email = request.getParameter(_loginMember);
 				authorization.unAuthorizedUser(email);
 				workerCookies.deleteCookies((HttpServletResponse) response, email);
-				_log.debug("___Filter2___sendRedirect---UnLogin");
+				___log.debug("___Filter2___sendRedirect---UnLogin");
 				HttpServletResponse tmp = (HttpServletResponse) response;
 				tmp.sendRedirect("/ChatOnServlet/loginPage.html");
 			}
 		} else {
-			_log.debug("___Filter2___sendRedirect                mainParam==null");
+			___log.debug("___Filter2___ sendRedirect                mainParam==null");
 			HttpServletResponse tmp = (HttpServletResponse) response;
 			tmp.sendRedirect("/ChatOnServlet/err404.html");
-
-			// RequestDispatcher requestDispatcher =
-			// request.getRequestDispatcher("/err404.html");
-			// requestDispatcher.forward(request, response);
-
 		}
 	}
 
 	@Override
 	public void destroy() {
-		_log.info("___Filter2___Destroy");
+		___log.info("___Filter2___Destroy");
 	}
 
 }

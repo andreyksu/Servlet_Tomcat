@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 public class DataSourceProvider {
 
-	private static final Logger _log = LogManager.getLogger(DataSourceProvider.class);
+	private static final Logger ___log = LogManager.getLogger(DataSourceProvider.class);
 
 	private final static Map<String, String> _mapOfAuthUser = Collections.synchronizedMap(new HashMap<String, String>());
 
@@ -44,9 +44,9 @@ public class DataSourceProvider {
 	 */
 
 	private DataSource getInnerDataSource() throws SQLException, NamingException {
-		_log.info("Фомируем InitialContext в методе getInnerDataSource()");
+		___log.info("Фомируем InitialContext в методе getInnerDataSource()");
 		InitialContext initalContext = new InitialContext();
-		_log.info("Выполняем lookup JNDI для базы данных");
+		___log.info("Выполняем lookup JNDI для базы данных");
 		return (DataSource) initalContext.lookup("java:/comp/env/jdbc/postgres");
 	}
 
@@ -61,10 +61,10 @@ public class DataSourceProvider {
 	public synchronized DataSource getDataSource() throws SQLException, NamingException {
 		if (_dataSource == null) {
 			_dataSource = getInnerDataSource();
-			_log.info("Возвращаем DataSource из класса SQLConnection - первая инициализация");
+			___log.info("Возвращаем DataSource из класса SQLConnection - первая инициализация");
 			return _dataSource;
 		} else {
-			_log.info("Возвращаем DataSource из класса SQLConnection - уже проинициализирвоали ранее");
+			___log.info("Возвращаем DataSource из класса SQLConnection - уже проинициализирвоали ранее");
 			return _dataSource;
 		}
 	}

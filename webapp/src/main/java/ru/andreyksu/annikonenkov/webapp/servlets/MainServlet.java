@@ -15,7 +15,7 @@ public class MainServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -5373004063297662448L;
 
-	private static final Logger _log = LogManager.getLogger(MainServlet.class);
+	private static final Logger ___log = LogManager.getLogger(MainServlet.class);
 
 	/**
 	 * Обрабатывает два исключения, выводит информацию и оборачивает в
@@ -26,24 +26,25 @@ public class MainServlet extends HttpServlet {
 	 */
 	@Override
 	public void init() throws ServletException {
-		_log.info("___MainServlet___Init");
+		___log.info("___MainServlet___Init");
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		_log.info("___MainServlet___DoFirst");
+		___log.info("___MainServlet___ выполняем редирект в MainServlet");
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/html/messagePage.html");
 		requestDispatcher.forward(request, response);
+		___log.info("___MainServlet___ после выполнения MainServlet");
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		_log.info("___MainServlet___DoPost");
+		___log.info("___MainServlet___DoPost");
 	}
 
 	@Override
 	public void destroy() {
-		_log.info("___MainServlet___Destroy");
+		___log.info("___MainServlet___Destroy");
 	}
 
 }

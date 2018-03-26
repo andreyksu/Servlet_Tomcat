@@ -20,19 +20,20 @@ public class SetterAndDeleterCookies {
 
 	private String _innerEmail = null;
 	
-	private Logger _log = null;
+	private Logger ___log = null;
 	
 	public SetterAndDeleterCookies(Logger log) {
-		_log = log;
+		___log = log;
 	}
 
 	public void setCookiesWithTime(HttpServletResponse response, String email, int time) {
+		___log.debug(String.format("___SetterAndDeleterCookies____ Сетим cookie email = %s", email));
+		
 		Cookie firstCoockie = new Cookie(_сookieOfNameChat, _nameOfChat);
 		firstCoockie.setMaxAge(time);
 		response.addCookie(firstCoockie);
 
-		Cookie secondCoockie = new Cookie(_cookieForEmailField, email);
-		_log.debug(String.format("___Cookies____ сетим cookie email = %s", email));
+		Cookie secondCoockie = new Cookie(_cookieForEmailField, email);		
 		secondCoockie.setMaxAge(time);
 		response.addCookie(secondCoockie);
 	}
@@ -48,7 +49,7 @@ public class SetterAndDeleterCookies {
 	public boolean isExistsUserByCookies(HttpServletRequest request, HttpServletResponse response, Map<String, String> mapAuthUSer) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {
-			_log.debug("Похожу куков вообще нет");
+			___log.debug("Похоже куков нет!");
 			return false;
 		}
 		String innerEmail = null;
@@ -63,8 +64,8 @@ public class SetterAndDeleterCookies {
 			}
 		}
 		if (boolNameChat && boolEmail) {
-			_log.debug("По Cookies прошли проверку метод isExistsUserByCookies");
-			_log.debug(String.format("___Cookies____ innerEmail = %s", innerEmail));
+			___log.debug("По Cookies прошли проверку ! Т.е. в куках есть инфа!");
+			___log.debug(String.format("___SetterAndDeleterCookies____ email = %s", innerEmail));
 			setCookies(response, innerEmail);
 			_innerEmail = innerEmail;
 			return true;
