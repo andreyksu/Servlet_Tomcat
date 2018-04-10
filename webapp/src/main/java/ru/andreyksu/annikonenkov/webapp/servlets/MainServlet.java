@@ -2,7 +2,6 @@ package ru.andreyksu.annikonenkov.webapp.servlets;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -17,13 +16,8 @@ public class MainServlet extends HttpServlet {
 
 	private static final Logger ___log = LogManager.getLogger(MainServlet.class);
 
-	/**
-	 * Обрабатывает два исключения, выводит информацию и оборачивает в
-	 * RunTimeException. По хорошему нужно было бы обрабоать в исходном классе,
-	 * но не понятно что делать на том уровне, по Эккелю в таком случае лучше
-	 * бросить вверх Да и смысла дальше работать если не получили DataSource.
-	 * {@inheritDoc}
-	 */
+	private static final String _message = "Message";
+
 	@Override
 	public void init() throws ServletException {
 		___log.info("___MainServlet___Init");
@@ -31,10 +25,19 @@ public class MainServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		___log.info("___MainServlet___ выполняем редирект в MainServlet");
-		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/html/messagePage.html");
-		requestDispatcher.forward(request, response);
-		___log.info("___MainServlet___ после выполнения MainServlet");
+		String mainParam = request.getParameter("mode");
+		if (mainParam != null && mainParam.equals(_message)) {
+			HttpServletResponse tmp = (HttpServletResponse) response;
+			tmp.sendRedirect("/ChatOnServlet/html/messagePage.html");
+		}
+
+		HttpServletResponse tmp = (HttpServletResponse) response;
+		tmp.sendRedirect("/ChatOnServlet/html/messagePage.html");
+
+		// RequestDispatcher requestDispatcher =
+		// request.getRequestDispatcher("/html/messagePage.html");
+		// requestDispatcher.forward(request, response);
+
 	}
 
 	@Override

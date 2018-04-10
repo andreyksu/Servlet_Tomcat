@@ -50,7 +50,7 @@ public class Authorization implements IAuthorization {
 	public boolean isAuthorizedUser(String email) {
 		___log.debug("Проверяем в локальном кэше наличие авторизованного пользователя. Проверка только по логину!");
 		if (_mapOfAuthUser.containsKey(email)) {
-			___log.debug(String.format("Логин %s есть в локальном кэше", email));
+			___log.debug("Логин {} есть в локальном кэше", email);
 			return true;
 		}
 		return false;

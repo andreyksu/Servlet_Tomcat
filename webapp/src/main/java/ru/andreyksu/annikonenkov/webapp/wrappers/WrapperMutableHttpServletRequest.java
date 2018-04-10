@@ -30,11 +30,13 @@ public class WrapperMutableHttpServletRequest extends HttpServletRequestWrapper 
 
 	public String getHeader(String name) {
 		String headerValue = customHeaders.get(name);
-		___log.debug(String.format("Получаем из Wrapper %s = %s", name, headerValue));
+		___log.debug("Получаем локального map нашего Wrapper {} = {}", name, headerValue);
 		if (headerValue != null) {
 			return headerValue;
 		}
-		return ((HttpServletRequest) getRequest()).getHeader(name);
+		String tmp = ((HttpServletRequest) getRequest()).getHeader(name);
+		___log.debug("Получаем из исходного Request {} = {}", name, tmp);
+		return tmp;
 	}
 
 	public Enumeration<String> getHeaderNames() {

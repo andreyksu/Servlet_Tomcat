@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html charset=utf-8">
-<title>Login Page</title>
-<meta charset="UTF-8">
-<script type="text/javascript" src="/ChatOnServlet/js/jquery-3.1.1.js"></script>
-<script type="text/javascript" src="/ChatOnServlet/js/submit_script.js"></script>
-<script type="text/javascript" src="/ChatOnServlet/js/edit_page_to_reg_script.js"></script>
-<link type="text/css" href="/ChatOnServlet/css/login.css" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html charset=utf-8">
+	<title>Login Page</title>
+	<meta charset="UTF-8">
+	<script type="text/javascript" src="/ChatOnServlet/js/jquery-3.3.1.js"></script>
+	<script type="text/javascript" src="/ChatOnServlet/js/edit_page_to_reg_script.js"></script>
+	<link type="text/css" href="/ChatOnServlet/css/login.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -16,16 +15,14 @@
 			<h1 id="HeadOfLoginPage">Страница авторизации</h1>
 		</div>
 		<div class="center">
-			<input type="radio" id="AuthorizationRadio" value="Authorization" name="mode" onclick="doAuthorizationForm()">
-			<label for="AuthorizationRadio">Авторизация</label> <input type="radio" id="RegistrationRadio" value="Registration"
-				name="mode" onclick="doRegistrationForm()"> <label for="RegistrationRadio">Регистрация</label>
+			<input type="radio" id="AuthorizationRadio" value="Authorization" name="mode" onclick="doAuthorizationForm()"><label for="AuthorizationRadio">Авторизация</label> 
+			<input type="radio" id="RegistrationRadio" value="Registration"	name="mode" onclick="doRegistrationForm()"><label for="RegistrationRadio">Регистрация</label>
 		</div>
 		<div class="center">
 			<table align="center" id="FormTable">
 				<tr id="LoginMemeber">
 					<td align="left">Login:</td>
-					<td align="left"><input type="email" maxlength="20" minlength="8" autofocus="autofocus" name="LoginMemeber"
-						placeholder="chat@chat.ru" required /></td>
+					<td align="left"><input type="email" maxlength="20" minlength="8" autofocus="autofocus" name="LoginMemeber"	placeholder="chat@chat.ru" required /></td>
 				</tr>
 				<tr id="PasswordMember">
 					<td align="left">Password:</td>
@@ -36,7 +33,6 @@
 					<td align="left"><input type="submit" value="Submit" formmethod="get" formaction="/ChatOnServlet/chat/" /></td>
 				</tr>
 			</table>
-			<button id="reqqq" onclick="tmp2()">GetRequest</button>
 		</div>
 	</form>
 </body>

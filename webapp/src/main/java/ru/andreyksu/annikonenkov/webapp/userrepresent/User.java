@@ -213,7 +213,7 @@ public class User implements IUser {
 	@Override
 	public boolean setUserActive(boolean stat) throws IOException {
 		String status = stat ? "true" : "false";
-		___log.debug(String.format("Устанавливаем пользователю статус Active = %s!!!", status));
+		___log.debug("Устанавливаем пользователю статус Active = {}!!!", status);
 		if (resultOfCheckExistUser.get("isactive") == null) {
 			if (!isExistUserInSystem()) {
 				return false;
@@ -223,7 +223,7 @@ public class User implements IUser {
 			preparedStatement.setString(1, status);
 			preparedStatement.setString(2, _email);
 			preparedStatement.executeUpdate();
-			___log.debug(String.format("Запись '%s' успешно обновлена", _email));
+			___log.debug("Запись '{}' успешно обновлена", _email);
 		} catch (SQLException e) {
 			___log.error("Ошибка при изменении записи пользователя Поле 'isactive' .", e);
 			throw new IOException(e);

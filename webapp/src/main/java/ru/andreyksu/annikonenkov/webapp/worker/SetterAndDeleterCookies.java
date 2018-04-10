@@ -19,21 +19,21 @@ public class SetterAndDeleterCookies {
 	private static final int _defaultSec = 60 * 60;
 
 	private String _innerEmail = null;
-	
+
 	private Logger ___log = null;
-	
+
 	public SetterAndDeleterCookies(Logger log) {
 		___log = log;
 	}
 
 	public void setCookiesWithTime(HttpServletResponse response, String email, int time) {
-		___log.debug(String.format("___SetterAndDeleterCookies____ Сетим cookie email = %s", email));
-		
+		___log.debug("___SetterAndDeleterCookies____ Сетим cookie email = {}", email);
+
 		Cookie firstCoockie = new Cookie(_сookieOfNameChat, _nameOfChat);
 		firstCoockie.setMaxAge(time);
 		response.addCookie(firstCoockie);
 
-		Cookie secondCoockie = new Cookie(_cookieForEmailField, email);		
+		Cookie secondCoockie = new Cookie(_cookieForEmailField, email);
 		secondCoockie.setMaxAge(time);
 		response.addCookie(secondCoockie);
 	}
@@ -65,7 +65,7 @@ public class SetterAndDeleterCookies {
 		}
 		if (boolNameChat && boolEmail) {
 			___log.debug("По Cookies прошли проверку ! Т.е. в куках есть инфа!");
-			___log.debug(String.format("___SetterAndDeleterCookies____ email = %s", innerEmail));
+			___log.debug("___SetterAndDeleterCookies____ email = {} ", innerEmail);
 			setCookies(response, innerEmail);
 			_innerEmail = innerEmail;
 			return true;

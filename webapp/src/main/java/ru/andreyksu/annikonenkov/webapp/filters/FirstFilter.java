@@ -41,19 +41,31 @@ public class FirstFilter implements Filter {
 
 	private void printInfo(HttpServletRequest httpreq) {
 		Enumeration<String> enumAtr = httpreq.getAttributeNames();
-		___log.debug("Attrebut - доступные значения из запроса");
+		___log.debug("	Attrebut - доступные значения из запроса");
 		while (enumAtr.hasMoreElements()) {
 			String string = (String) enumAtr.nextElement();
 			String val = httpreq.getParameter(string);
 			___log.debug("{} = {}", string, val);
 		}
 		Enumeration<String> enumHeader = httpreq.getHeaderNames();
-		___log.debug("Headers - доступные значения из запроса");
+		___log.debug("	Headers - доступные значения из запроса");
 		while (enumHeader.hasMoreElements()) {
 			String string = (String) enumHeader.nextElement();
 			String val = httpreq.getHeader(string);
 			___log.debug("{} = {}", string, val);
 		}
+
+		Map<String, String[]> param = httpreq.getParameterMap();
+		___log.debug("	Parameter - доступные значения из запроса");
+		for (String str : param.keySet()) {
+			String tmp = str + " :: ";
+			String[] par = param.get(str);
+			for (String tmpPar : par) {
+				tmp = tmp + tmpPar + "; ";
+			}
+			___log.debug(tmp);
+		}
+
 	}
 
 	@Override
@@ -70,7 +82,7 @@ public class FirstFilter implements Filter {
 			SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies(___log);
 			boolean isExistCookie = workerCookies.isExistsUserByCookies((HttpServletRequest) mutableRequest, (HttpServletResponse) response, _mapOfAuthUser);
 			if (isExistCookie) {
-				___log.debug(String.format("___Filter1___ workerCookies.getEmail() = %s ", workerCookies.getEmail()));
+				___log.debug("___Filter1___ workerCookies.getEmail() = {} ", workerCookies.getEmail());
 				mutableRequest.putHeader(_loginMember, workerCookies.getEmail());
 			}
 		}
