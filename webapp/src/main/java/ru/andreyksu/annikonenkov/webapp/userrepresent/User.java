@@ -1,11 +1,13 @@
 package ru.andreyksu.annikonenkov.webapp.userrepresent;
 
 import java.io.IOException;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
@@ -27,6 +29,10 @@ public class User implements IUser {
 	private final Map<String, String> resultOfCheckExistUser = new HashMap<String, String>();
 
 	private static final String _forIsExistUserInSystem = "SELECT * FROM principal WHERE email=?";
+	
+	private static final String _forActiveUserList = "select email from principal where isactive = true";
+	
+	private static final String _forInactiveUserList = "select email from principal where isactive = true";
 
 	private static final String _forRegistrateUser = "INSERT INTO principal (email, password, name) values (?, ?, ?)";
 
@@ -35,8 +41,8 @@ public class User implements IUser {
 	private static final String _forGrandUserAdminRole = "UPDATE principal SET isadmin = ? where email=?";
 
 	/**
-	 * Конструиерут объект представляющего пользователя. Так как основным
-	 * отличием пользователя является его имя Конструктор
+	 * Конструирует объект представляющий пользователя. Так как индетификатором
+	 * пользователя является его имя (email).
 	 * 
 	 * @param log
 	 * @param dataSource
@@ -75,6 +81,20 @@ public class User implements IUser {
 			___log.error("Ошибка при проверке наличия пользователя в системе", e);
 			throw new IOException(e);
 		}
+	}
+	
+	@Override
+	public List<String> getListOfUsers(String activity) throws IOException{
+		___log.debug("Возвращаем список пользователей");
+		String concreteQuery = activity.equals("activ") ?  _forActiveUserList : _forInactiveUserList;
+		try (Connection connection = _dataSourcel.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(concreteQuery)) {			
+			ResultSet result = preparedStatement.executeQuery();
+			Array arr = result.getArray("email");
+		} catch (SQLException e) {
+			___log.error("Ошибка при проверке наличия пользователя в системе", e);
+			throw new IOException(e);
+		}
+		return null;
 	}
 
 	/**

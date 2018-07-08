@@ -49,6 +49,12 @@
 			<version>42.1.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -83,7 +89,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-		
+
 		</plugins>
 
 	</build>

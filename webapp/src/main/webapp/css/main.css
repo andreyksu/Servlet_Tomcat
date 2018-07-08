@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Lato|Raleway');
 
 body{
-	background-color: #f2f2f2;
+	background-color: #C7C7C7;
 	font-family: "Lato";
 	font-weight: normal;
 	font-size: 14px;
@@ -41,10 +41,6 @@ a:hover, a:focuse{
 	border-color: #2d2d2d;
 }
 
-.navbar-inverse .navbar-nav > .active > a{
-	background-color: #ff7878;
-}
-
 .navbar-inverse .navbar-brand {
 	color: #999;
 	font-weight: bolder;
@@ -64,7 +60,7 @@ a:hover, a:focuse{
 
 	position: fixed;
 	width: 100%;
-	height: 100%;	
+	height: 100%;
 
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
@@ -88,7 +84,7 @@ a:hover, a:focuse{
 	height: 750px;
 	overflow-x: auto;
 	overflow-y: auto;
-}​
+}
 
 .row
 {

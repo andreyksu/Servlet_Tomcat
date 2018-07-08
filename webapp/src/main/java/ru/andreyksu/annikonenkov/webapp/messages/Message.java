@@ -1,29 +1,77 @@
 package ru.andreyksu.annikonenkov.webapp.messages;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
+import javax.sql.DataSource;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Message implements IMessage {
 
+	private final DataSource _dataSource;
+
+	private static final Logger ___log = LogManager.getLogger(Message.class);
+
+	private static final String _toInsertNewMessageForRecipient = "INSERT INTO messages(author, uuid, message) values (?, ?, ?)";
+
+	private static final String _toSelectMessageFromRecipient = "SELECT messages.message, messages.messagedate FROM matrix_message_user AS matrix JOIN messages ON matrix.uuid_message = messages.uuid AND email_recipient = ?";
+	// select messages.message, messages.messagedate from matrix_message_user as
+	// matrix join messages on matrix.uuid_message = messages.uuid and
+	// email_recipient = 'test1@yandex.ru';
+
+	public Message(DataSource dataSource) {
+		_dataSource = dataSource;
+	}
+
 	/**
 	 * Вставляем новое сообщение для списка получателей {@inheritDoc}
+	 * 
+	 * @throws IOException
 	 */
 	@Override
-	public void newMessageToRecipient(String email, String message, String recipient) {}
+	public void newMessageToRecipient(String authorEmail, String message, String recipient) throws IOException {
+		try (Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_toInsertNewMessageForRecipient)) {
+			preparedStatement.setString(1, authorEmail);
+			preparedStatement.setString(2, message);
+			preparedStatement.setString(3, recipient);
+			int countRow = preparedStatement.executeUpdate();
+			___log.debug("В методе [newMessageToRecipient] удалось вставить в БД %d записей", countRow);
+		} catch (SQLException e) {
+			___log.error("Ошибка при вставке/записи в БД нового сообщения!", e);
+			throw new IOException(e);
+		}
+	}
 
 	/**
 	 * Вставляем новое сообщение для комнаты. {@inheritDoc}
 	 */
 	@Override
-	public void newMessageToRoom(String email, String message, String room) {}
+	public void newMessageToRoom(String authorEmail, String message, String room) {
+		___log.error("Method 'newMessageToRoom( ... )' не реализован.");
+	}
 
 	/**
 	 * Получаем 30 новых сообщений. Используется после авторизации.
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Map<String, String> getMessagesFromRecipients(String email, String recipient, String startDate, String stopDate) {
-		return null;
+	public String getMessagesFromRecipient(String recipient) throws IOException {
+		String result = null; 
+		try(Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatment = connection.prepareStatement(_toSelectMessageFromRecipient)){
+			preparedStatment.setString(1, recipient);
+			ResultSet resultSet = preparedStatment.executeQuery();
+			result = resultSet.toString();
+			___log.debug("Получили запись из базы!");
+		}
+		catch(SQLException e){
+			___log.error("Ошибка при извлечении сообщения из базы.", e);
+			throw new IOException(e);
+		}
+		return result;
 	}
 
 	/**
@@ -41,7 +89,8 @@ public class Message implements IMessage {
 	 * @throws SQLException
 	 */
 	@Override
-	public Map<String, String> getMessagesFromRoom(String email, String room, String startDate, String stopDate) {
+	public String getMessagesFromRoom(String authorEmail, String room, String startDate, String stopDate) {
+		___log.error("Method 'getMessagesFromRoom( ... )' не реализован.");
 		return null;
 	}
 

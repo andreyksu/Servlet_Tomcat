@@ -75,4 +75,12 @@ CREATE TABLE matrix_message_room
       ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
+insert into principal(email, password, name) values ('test5@yzndex.ru', '123456789', 'test5');
+insert into messages(author, uuid, message) values ('test2@yzndex.ru', 'a9207b7d-9c1e-4e5c-acff-99168e0987b7', 'Сообщение от test2 для test1');
+insert into matrix_message_user (email_recipient, uuid_message) values ('test1@yandex.ru', 'a9207b7d-9c1e-4e5c-acff-99168e0987b7');
+
+select m.message, m.messagedate from matrix_message_user as mmu inner join messages as m on m.uuid = mmu.uuid_message where mmu.email_recipient = 'test11@yandex.ru' and m.author = 'test1@yandex.ru';
+
+
+
 

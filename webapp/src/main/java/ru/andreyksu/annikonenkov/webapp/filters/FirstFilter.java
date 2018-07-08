@@ -20,6 +20,20 @@ import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
 import ru.andreyksu.annikonenkov.webapp.worker.SetterAndDeleterCookies;
 import ru.andreyksu.annikonenkov.webapp.wrappers.WrapperMutableHttpServletRequest;
 
+/**
+ * Второй фильтр в цепочке фильтров.
+ * <p>
+ * Основная задача данного фильтра, просмотреть запрос. Если в запросе есть
+ * параметр означающий, что идет обмен сообщениями, то проверяет по Cookies,
+ * авторизован ли пользователь. Если по cookies выясняется что пользователь
+ * авторизован, то добавляет необходимые параметры для следующего фильтра, что
+ * бы в следующем фильтре как можно быстрее прошла проверка (т.е. с минимальным
+ * временем).
+ * <p>
+ * В ином случае если по cookies пльзователь не обнаружен как авторизован, то
+ * прокидывается на следующий фильтр, без соответствующих параметров. А там на
+ * страницу авторизации.
+ */
 public class FirstFilter implements Filter {
 
 	private static final Logger ___log = LogManager.getLogger(FirstFilter.class);
@@ -39,6 +53,11 @@ public class FirstFilter implements Filter {
 		_mapOfAuthUser = dataSP.getMapAuthUser();
 	}
 
+	/**
+	 * Выводит в логи информацию из запроса. Добавлен для отлкдаки.
+	 * 
+	 * @param httpreq - объект представляющий собой запрос.
+	 */
 	private void printInfo(HttpServletRequest httpreq) {
 		Enumeration<String> enumAtr = httpreq.getAttributeNames();
 		___log.debug("	Attrebut - доступные значения из запроса");

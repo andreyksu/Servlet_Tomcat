@@ -31,9 +31,11 @@ public class SetterAndDeleterCookies {
 
 		Cookie firstCoockie = new Cookie(_сookieOfNameChat, _nameOfChat);
 		firstCoockie.setMaxAge(time);
+		firstCoockie.setPath("/");
 		response.addCookie(firstCoockie);
 
 		Cookie secondCoockie = new Cookie(_cookieForEmailField, email);
+		secondCoockie.setPath("/");
 		secondCoockie.setMaxAge(time);
 		response.addCookie(secondCoockie);
 	}

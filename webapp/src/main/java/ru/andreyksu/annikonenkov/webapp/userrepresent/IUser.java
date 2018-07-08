@@ -1,10 +1,13 @@
 package ru.andreyksu.annikonenkov.webapp.userrepresent;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IUser {
 
 	boolean isExistUserInSystem() throws IOException;
+	
+	List<String> getListOfUsers(String activity) throws IOException;
 
 	boolean isUserActive() throws IOException;
 

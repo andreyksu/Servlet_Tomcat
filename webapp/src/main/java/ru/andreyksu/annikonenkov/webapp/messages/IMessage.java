@@ -1,15 +1,16 @@
 package ru.andreyksu.annikonenkov.webapp.messages;
 
-import java.util.Map;
+import java.io.IOException;
 
 public interface IMessage {
 
-	public void newMessageToRecipient(String email, String message, String recipient);
+	public void newMessageToRecipient(String authorEmail, String message, String recipient) throws IOException;
 
-	public void newMessageToRoom(String email, String message, String room);
+	public void newMessageToRoom(String authorEmail, String message, String room);
 
-	public Map<String, String> getMessagesFromRecipients(String email, String recipient, String startDate, String stopDate);
+//	public String getMessagesFromRecipient(String authorEmail, String recipient, String startDate, String stopDate) throws IOException;
+	public String getMessagesFromRecipient(String recipient) throws IOException;
 
-	public Map<String, String> getMessagesFromRoom(String email, String room, String startDate, String stopDate);
+	public String getMessagesFromRoom(String authorEmail, String room, String startDate, String stopDate);
 
 }
