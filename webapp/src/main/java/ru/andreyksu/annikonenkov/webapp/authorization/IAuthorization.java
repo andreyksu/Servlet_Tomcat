@@ -4,15 +4,14 @@ import java.io.IOException;
 
 public interface IAuthorization {
 
+    boolean isAuthorizedUserInSystem(String email, String password) throws IOException;
 
-	boolean authorizedInSystem(String email, String password) throws IOException;
+    boolean isPresentUserInLocalMapAsAuthorized(String email);
 
-	boolean isAuthorizedUser(String email);
+    boolean isPresentUserInLocalMapAsAuthorized(String email, String password);
 
-	boolean isAuthorizedUser(String email, String password);
+    void unAuthorizedUser(String email);
 
-	void unAuthorizedUser(String email);
-
-	boolean registrate(String email, String password, String name) throws IOException;
+    boolean registrateUserInSystem(String email, String password, String name) throws IOException;
 
 }

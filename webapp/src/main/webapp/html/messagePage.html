@@ -1,67 +1,51 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
+
 <head>
-	<meta http-equiv="Content-Type" content="text/html charset=utf-8">
-	<title>Chat Page</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script type="text/javascript" src="/ChatOnServlet/js/jquery-3.3.1.js"></script>
-	<script type="text/javascript" src="/ChatOnServlet/js/bootstrap.js"></script>
-	<script type="text/javascript" src="/ChatOnServlet/js/fontawesome-all.js"></script>
-	<script type="text/javascript" src="/ChatOnServlet/js/forMessagePage.js"></script>
-	<link type="text/css" href="/ChatOnServlet/css/bootstrap.css" rel="stylesheet"/>
-	<link type="text/css" href="/ChatOnServlet/css/fontawesome-all.css" rel="stylesheet"/>
-	<link type="text/css" href="/ChatOnServlet/css/main.css" rel="stylesheet"/>
+  <title>Chat Page</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF8">
+  <meta charset="utf-8">
+  <meta name="description" content="Описание">
+  <meta name="keywords" content="Набор, ключевых, слов, для, поиска">
+  <meta name="author" contetn="Имя автора">
+  <script type="text/javascript" src="/ChatOnServlet/js/jquery-3.3.1.js"></script>
+  <script type="text/javascript" src="/ChatOnServlet/js/forMessagePage.js" defer></script>
+  <link type="text/css" href="/ChatOnServlet/css/main.css" rel="stylesheet" />
+  <link rel="shortcut icon" href="/ChatOnServlet/images/mail.ico" type="image/x-icon">
 </head>
 
-<body>
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">BE<i class="fa fa-circle"></i>NLINE</a>
-			</div>
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#" onclick="unAuthorized()">Выйти</a></li>
-					<li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
-	<div id="headerwrap">
-		<div class="container">
-			<div class="row main">
-				<div class="col-lg-2 col-md-2 col-sm-2" id="hidedElement">
-					<h4 class="nowrapElement">Achievements left</h4>
-					<div class="spanr achievements-wrapper">
-						<ul class="nav nav-pills nav-stacked nowrapElement" data-spy="affix" data-offset-top="205" id="spaceForRecipients">
-							<li><a href="#" name="test">Test-элемент Test-элемент Test-элемент</a></li>
-						</ul>
-					</div>
-				</div>
-				<div class="col-lg-10 col-md-10 col-sm-10">
-					<h2>Achievements left</h2>
-					<div class="spanr achievements-wrapper">
-						<ul class="nav nav-pills nav-stacked" data-spy="affix" data-offset-top="205" id="spaceForMessage">
-							<li><a href="#">Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент  Test-элемент</a></li>														
-						</ul>
-					</div>
-
-					<div>
-						<div class="input-group">
-							<textarea class="form-control custom-control" id="messageTextField" rows="1" style="resize:none"></textarea>
-							<span class="input-group-addon btn btn-primary" onclick="sendMessageOnServer()">Отправить</span>
-							<!--<span class="input-group-addon btn btn-primary" onclick="sendMessage()">Отправить</span> -->
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<body onload="getListOfUsers()">
+  <div class="root style_fb">
+    <nav class="main_block style_fb">
+      <header>
+        <form class="list_of_user">
+          <input type="search" placeholder="Search user">
+          <button type="button">GO</button>
+        </form>
+      </header>
+      <ul class="list_of_user" id="spaceForRecipients">
+      </ul>
+    </nav>
+    <section class="main_block style_fb">
+      <header>
+        <h3 id="title_for_message">Выберите собеседника!</h3>
+        <a href="#" onclick="unAuthorized()">Выйти</a>
+      </header>
+      <div class="message_container">
+        <section id="spaceForMessage">
+        </section>
+      </div>
+      <footer>
+        <form id="put_message" onsubmit="sendMessageOnServer();return false;">
+          <input name="MessageText" placeholder="Put the message" wrap="soft" id="messageTextField"></input>
+          <button type="button" value="Send" onclick="sendMessageOnServer()"></button>
+        </form>
+        <input type="file" name="file" id="ChooseFile" onchange="handleFiles(this.files)" accept="text/*"/>
+        <label for="ChooseFile" id="LableChooseFile"></label>
+        <label onclick="sendSelectedFilesFetch()">Send</label>
+      </footer>
+    </section>
+  </div>
 </body>
+
 </html>
