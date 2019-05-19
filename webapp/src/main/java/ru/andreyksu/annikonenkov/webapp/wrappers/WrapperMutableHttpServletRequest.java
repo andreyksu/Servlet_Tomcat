@@ -13,39 +13,53 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Класс предназначен для добавления к запросу необходимых/кастомных header. Применяется для авторизации - добавляется доп. информация к запросу.
+ */
 public class WrapperMutableHttpServletRequest extends HttpServletRequestWrapper {
 
-	private static final Logger ___log = LogManager.getLogger(WrapperMutableHttpServletRequest.class);
+    private static final Logger _log = LogManager.getLogger(WrapperMutableHttpServletRequest.class);
 
-	private final Map<String, String> customHeaders;
+    private final Map<String, String> customHeaders;
 
-	public WrapperMutableHttpServletRequest(HttpServletRequest request) {
-		super(request);
-		customHeaders = new HashMap<String, String>();
-	}
+    public WrapperMutableHttpServletRequest(HttpServletRequest request) {
+        super(request);
+        customHeaders = new HashMap<String, String>();
+    }
 
-	public void putHeader(String name, String value) {
-		this.customHeaders.put(name, value);
-	}
+    /**
+     * Добавляет необходимый header и исходному, что доступен из запроса.
+     * 
+     * @param name - Имя в header
+     * @param value - Значение в header
+     */
 
-	public String getHeader(String name) {
-		String headerValue = customHeaders.get(name);
-		___log.debug("Получаем локального map нашего Wrapper {} = {}", name, headerValue);
-		if (headerValue != null) {
-			return headerValue;
-		}
-		String tmp = ((HttpServletRequest) getRequest()).getHeader(name);
-		___log.debug("Получаем из исходного Request {} = {}", name, tmp);
-		return tmp;
-	}
+    public void putHeader(String name, String value) {
+        this.customHeaders.put(name, value);
+    }
 
-	public Enumeration<String> getHeaderNames() {
-		Set<String> set = new HashSet<String>(customHeaders.keySet());
-		Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
-		while (e.hasMoreElements()) {
-			String n = e.nextElement();
-			set.add(n);
-		}
-		return Collections.enumeration(set);
-	}
+    @Override
+    public String getHeader(String name) {
+        String headerValue = customHeaders.get(name);
+        if (headerValue != null) {
+            _log.debug("Из нашего RequestWrapper {} = {}", name, headerValue);
+            return headerValue;
+        }
+        String tmp = ((HttpServletRequest) getRequest()).getHeader(name);
+        if (tmp != null) {
+            _log.debug("Из исходного Request {} = {}", name, tmp);
+        }
+        return tmp;
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        Set<String> set = new HashSet<String>(customHeaders.keySet());
+        Enumeration<String> e = ((HttpServletRequest) getRequest()).getHeaderNames();
+        while (e.hasMoreElements()) {
+            String n = e.nextElement();
+            set.add(n);
+        }
+        return Collections.enumeration(set);
+    }
 }
