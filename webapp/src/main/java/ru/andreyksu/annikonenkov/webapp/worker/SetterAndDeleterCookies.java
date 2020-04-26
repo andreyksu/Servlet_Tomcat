@@ -70,7 +70,7 @@ public class SetterAndDeleterCookies {
         }
         if (presentNameChat && presentEmail) {
             _log.debug("По Cookies прошли проверку ! Т.е. в куках есть информация по пользователю с email = {}!", _emailFromCookie);
-            setCookies(response, _emailFromCookie);
+            setCookies(response, _emailFromCookie);//Т.е. обновляем cookie.
             return true;
         }
         return false;

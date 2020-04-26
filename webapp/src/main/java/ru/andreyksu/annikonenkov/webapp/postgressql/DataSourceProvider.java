@@ -52,7 +52,7 @@ public class DataSourceProvider {
             _log.info("Возвращаем DataSource из класса SQLConnection - первая инициализация");
             return _dataSource;
         } else {
-            _log.info("Возвращаем DataSource из класса SQLConnection - уже проинициализирвоали ранее");
+            _log.info("Возвращаем DataSource из класса SQLConnection - уже проинициализировали ранее");
             return _dataSource;
         }
     }

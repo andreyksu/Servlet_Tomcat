@@ -94,6 +94,7 @@ public class AddHeaderToRequestForMessagingServlet implements Filter {
      * @param httpreq - объект представляющий собой запрос.
      */
     private void printInfo(HttpServletRequest httpreq) {
+    	_log.debug(httpreq.getMethod());
         _log.debug("PrintInfo: Выводим_основные_параметры_запроса_для_отладки!");
         Enumeration<String> enumAtr = httpreq.getAttributeNames();
         _log.debug("	Attrebute - доступные значения из запроса");

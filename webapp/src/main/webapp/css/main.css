@@ -1,93 +1,375 @@
-@import url('https://fonts.googleapis.com/css?family=Lato|Raleway');
+html,
+body {
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
 
-body{
-	background-color: #C7C7C7;
-	font-family: "Lato";
-	font-weight: normal;
-	font-size: 14px;
-	color: #555;
-
-	-webkit-font-smoothing: antialiased;
-	-webkit-overflow-scrolling: touch;
-
-	margin-top: 70px;
+  overflow: hidden;
+  /*при задании высоты, нужно обязательно указать что сделать при привышении контентом указанной высоты*/
+  background-image: url(/ChatOnServlet/images/white-brick-small.jpg);
 }
 
-h1, h2, h3, h4, h5, h6{
-	font-family: "Raleway"
-	font-weight: bold;
-	color: #333;
+.style_fb {
+  display: block;
+  height: 100%;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  border: 0px;
+
+  box-sizing: border-box;
+  /*изменяет расчет высоты и ширины! Добавеляет в расчет padding и border*/
 }
 
-a{
-	color: #000000;
+/**********************************************************************/
+div.root {
+  position: relative;
 }
 
-a:hover, a:focuse{
-	color: #7b7b7b;
-	text-decoration: none;
-	outline: 0;
+/***********************************/
+.main_block {
+  position: absolute;
 }
 
-.navbar {
-	font-weight: 800;
-	font-size: 14px;
-	padding-top: 10px;
-	padding-bottom: 10px;
+nav.main_block {
+  /*С процентами не очень понравилось. Когда уменьшаются размеры, все наезжает друг на друга*/
+  left: 0;
+  width: 250px;
+  border-right: 1px dotted black;
 }
 
-.navbar-inverse {
-	background:  #2d2d2d;
-	border-color: #2d2d2d;
+section.main_block {
+  right: 0;
+  border-left: 1px solid;
+  padding-left: 250px;
+  /*margin-left - не подходит*/
+  padding-right: 5px;
+  padding-bottom: 10px;
+  box-sizing: border-box;
 }
 
-.navbar-inverse .navbar-brand {
-	color: #999;
-	font-weight: bolder;
-	font-size: 22px;
-	letter-spacing: 1px;
+/**********************************************************************/
+.list_of_user {
+  box-sizing: border-box;
 }
 
-#headerwrap{
-	background: url("../images/Main_BG.jpg") no-repeat center top;
-	margin-top: -10px;
-	padding-top: 20px;
-	text-align: left;
-	background-attachment: fixed;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: cover cover;
+/**********************************************************************/
+nav.main_block>header {
+  position: relative;
+  top: 0;
+  width: 100%;
+  height: 50px;
 
-	position: fixed;
-	width: 100%;
-	height: 100%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  margin-left: 2px;
 
-	-webkit-background-size: cover;
-	-moz-background-size: cover;
-	-o-background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
 
-#headerwrap h2{
-	margin-top: 10px;
-	padding-top: 10px;
-	color: black;
-	font-size: 40px;	
-	letter-spacing: 3px;
-	text-transform: uppercase;
+form.list_of_user {
+  position: relative;
+  width: 95%;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
-.nowrapElement {
-	white-space: nowrap;
+form.list_of_user>input {
+  box-sizing: border-box;
+  width: 100%;
+
+  height: 36px;
+  padding-left: 10px;
+  border: 2px solid gray;
+  border-radius: 5px;
+  outline: none;
+  color: black;
 }
 
-.spanr {
-	height: 750px;
-	overflow-x: auto;
-	overflow-y: auto;
+form.list_of_user>button {
+  box-sizing: border-box;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #d4d4d4;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
 }
 
-.row
-{
-	height: calc(100% - 100px);
-	overflow: auto;
+form.list_of_user>button:before {
+  box-sizing: border-box;
+  font-family: FontAwesome;
+  font-size: 16px;
+  color: black;
 }
+
+/***********************************/
+
+nav>ul.list_of_user {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  height: calc(100% - (50px));
+  /*Минус на эту часть nav.main_block>header */
+
+  padding-inline-start: 10px;
+  z-index: 1;
+  overflow-y: auto;
+}
+
+nav>ul.list_of_user p {
+  display: flex;
+  align-items: center;
+}
+
+nav>ul.list_of_user a {
+  display: block;
+  padding-left: 3px;
+  text-decoration: none;
+  display: inline-block;
+  color: black;
+}
+
+nav>ul.list_of_user a:hover {
+  background: #EEEEEE;
+  color: gray;
+  border: 1px dashed #333333;
+
+}
+
+nav>ul.list_of_user img {
+  max-width: 30px;
+  border-radius: 50%;
+  margin: 0;
+}
+
+/**********************************************************************/
+section.main_block>header {
+  position: relative;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px dotted black;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+
+section.main_block>header>h3 {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+section.main_block>header>a {
+  display: inline-block;
+  position: absolute;
+  right: 0;
+
+}
+
+/***********************************/
+
+div.message_container {
+  height: calc(100% - (50px + 100px));
+  /*вычетается на это section.main_block>header и на это section.main_block>footer*/
+  overflow-y: auto;
+  padding-right: 10px;
+  padding-left: 5px;
+  box-sizing: border-box;
+}
+
+/***********************************/
+
+section>footer {
+  box-sizing: border-box;
+  position: relative;
+  /*Если ставить здесь absolute - то ширина будет равна всему экрану
+  * И будет выходит за пределы справа.
+  * Почему так, не разобрался.
+  * Хотя у родителя стоит не static
+  */
+  bottom: 0;
+  width: 100%;
+  height: 100px;
+  padding-left: 5px;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  flex-flow: row nowrap;
+  /*justify-content:flex-start;*/
+  justify-content: space-around;
+}
+
+
+
+form#put_message {
+  box-sizing: border-box;
+  position: relative;
+  /*
+  * Аналогично если ставить здесь absolute - то ширина при 100% будет равна ширине section а не footer
+  */
+  width: calc(100% - 51px);
+  margin: 0 auto;
+  padding: 0;
+}
+
+#put_message>input {
+  box-sizing: border-box;
+  resize: none;
+  width: 100%;
+  height: 45px;
+  border: 2px solid gray;
+  border-radius: 5px;
+  outline: none;
+  color: black;
+}
+
+#put_message>button {
+  box-sizing: border-box;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  height: 41px;
+  width: 41px;
+  border: none;
+  background: #d4d4d4;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+}
+
+#put_message>button::before {
+  box-sizing: border-box;
+  content: "\1F582";
+  font-family: FontAwesome;
+  font-size: 16px;
+  color: black;
+}
+
+footer>input#ChooseFile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+footer>label {
+
+  margin: 0;
+  height: 41px;
+  width: 41px;
+  cursor: pointer;
+
+  color: white;
+  background-color: #d4d4d4;
+
+  border-radius: 5px;
+  border: 2px solid gray;
+
+  color: black;
+  font-size: 14px;
+
+  /*outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px; */
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+footer>label#LableChooseFile::before {
+  box-sizing: border-box;
+  content: "\1F5C1";
+  font-family: FontAwesome;
+  font-size: 16px;
+  color: black;
+}
+
+/*#ChooseFile:focus+label,
+#ChooseFile+label:hover {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
+}*/
+label:focus,label:hover {
+  outline: 1px dotted #000;
+  outline: -webkit-focus-ring-color auto 5px;
+}
+
+/**********************************************************************/
+article.current_user,
+article.member {
+  position: relative;
+  width: 100%;
+}
+
+div.current_user,
+div.member {
+  position: relative;
+  display: flex;
+}
+
+div.current_user {
+  flex-direction: row-reverse;
+  padding-left: 300px;
+
+}
+
+div.member {
+  flex-direction: row;
+  padding-right: 300px;
+}
+
+div.current_user p,
+div.member p {
+  padding: 3px;
+  display: block;
+  border-radius: 4px;
+  border: 1px solid #BBB;
+}
+
+div.current_user p {
+  background-color: #F5FFFF;
+}
+
+div.member p {
+  background-color: #FFFAF0;
+}
+
+span.message_date_time {
+  color: grey;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 60%;
+}
+
+
+div.structure_of_message {
+  display: flex;
+  /*flex-direction: row;*/
+  align-items: center;
+}
+
+div.structure_of_message>img {
+  max-width: 60px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  border-radius: 50%;
+}
+
+/**********************************************************************/
+
+
+/**********************************************************************/

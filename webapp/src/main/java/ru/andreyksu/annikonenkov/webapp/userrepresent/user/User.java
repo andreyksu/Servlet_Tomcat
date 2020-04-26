@@ -63,7 +63,7 @@ public class User implements IUser {
 
     public static boolean isValidEmail(String email) {
         _log.debug("Проверяем валидность email пользователя!");
-        boolean valid = baseValid(email);
+        boolean valid = baseValid(email);        
         if (!valid)
             _log.error("Email пользователя НЕ валиден!");
         return valid;
@@ -74,13 +74,15 @@ public class User implements IUser {
         int maxLenght = 100;
         boolean tmp = (parameter != null && parameter.length() >= minLenght && parameter.length() <= maxLenght);
         if (!tmp) {
-            _log.error("Параметр {} не прошел проверку!", parameter);
+            _log.error("Параметр {} НЕ прошел проверку!", parameter);
+        }else {
+        	_log.debug("Параметр {} прошел проверку!", parameter);
         }
         return tmp;
     }
 
     private boolean setResultOfQueryExistUserInMap(ResultSet result) throws SQLException {
-        _log.debug("Разбираем полученный результат запроса по пользователю из базы!");
+        _log.debug("Разбираем полученный результат запроса по пользователю из БД!");
         int count = 0;
         while (result.next()) {// Почему-то не подходит result.first()
             _email = result.getString("email").trim();
@@ -91,9 +93,9 @@ public class User implements IUser {
             _isadmin = result.getBoolean("isadmin");
             count++;
         }
-        _log.debug("Количество найденных пользователей count = {}", count);
+        _log.debug("Количество найденных в БД пользователей count = {}", count);
         _log.debug(
-                "По результатам запроса сформирован следующий пользователь _email = {}, _password = {}, _name = {}, _regdata = {}, _isactive = {},  _isadmin={} ",
+                "По результатам запроса в БД сформирован следующий пользователь _email = {}, _password = {}, _name = {}, _regdata = {}, _isactive = {},  _isadmin={} ",
                 _email, _password, _name, _regdata, _isactive, _isadmin);
 
         return count != 0 ? true : false;

@@ -30,9 +30,9 @@
 
 	<Loggers>
 	<!-- Удобно когда нужно выводить определенную информацию для одного класса -->
-	    <Logger name= "ru.andreyksu.annikonenkov.entrance.MainClass" level="debug" additivity="true">
-           <AppenderRef ref="console"/>
-        </Logger>
+		<Logger name= "ru.andreyksu.annikonenkov.entrance.MainClass" level="debug" additivity="true">
+			<AppenderRef ref="console"/>
+		</Logger>
 
 		<Root level="all" additivity="false">
 			<AppenderRef ref="console" />

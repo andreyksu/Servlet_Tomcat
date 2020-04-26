@@ -21,6 +21,7 @@
 	</filter>
 
 	<filter-mapping>
+	<!--  Соответственно будет выполнено для всех картинок, css, js итд. Стоит обратить это в логах. -->
 		<filter-name>offCacheFirstFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
@@ -30,9 +31,14 @@
 		<servlet-name>entranceServletForMessaging</servlet-name>
 	</filter-mapping>
 	
-		<filter-mapping>
+	<filter-mapping>
 		<filter-name>addHeaderToRequestForMessagingServlet</filter-name>
 		<servlet-name>entranceServletForGetUsers</servlet-name>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>addHeaderToRequestForMessagingServlet</filter-name>
+		<servlet-name>fileDownloadServlet</servlet-name>
 	</filter-mapping>
 
 	<!-- Declaration Servlet -->
@@ -61,6 +67,11 @@
 		<servlet-class>ru.andreyksu.annikonenkov.webapp.entranceservlets.EntranceServletForRegistration</servlet-class>
 	</servlet>
 
+	<servlet>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<servlet-class>ru.andreyksu.annikonenkov.webapp.entranceservlets.FileDownloadServlet</servlet-class>
+	</servlet>
+
 
 	<!-- Mapping Servlet -->
 	<servlet-mapping>
@@ -72,7 +83,6 @@
 		<servlet-name>entranceServletForGetUsers</servlet-name>
 		<url-pattern>/chat/getusers/*</url-pattern>
 	</servlet-mapping>
-
 
 	<servlet-mapping>
 		<servlet-name>entranceServletForLogOut</servlet-name>
@@ -87,6 +97,11 @@
 	<servlet-mapping>
 		<servlet-name>entranceServletForRegistration</servlet-name>
 		<url-pattern>/chat/registration/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>fileDownloadServlet</servlet-name>
+		<url-pattern>/chat/getFile/*</url-pattern>
 	</servlet-mapping>
 
 

@@ -60,9 +60,10 @@ public class EntranceServletForLogOut extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
         try (PrintWriter pw = response.getWriter()) {
+        	_log.debug("Переводим на стринцу loginPage.html");
             pw.println("/ChatOnServlet/loginPage.html");
             pw.flush();
-            // pw.close();
+            // pw.close(); //Больше не нужен, так как создается объект внутри try.
         } catch (Exception e) {
             _log.catching(e);
         }
