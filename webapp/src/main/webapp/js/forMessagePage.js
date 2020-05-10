@@ -202,9 +202,9 @@ var messagesSectionID = "spaceForMessage";
  */
 
 function clearMessages() {
-  var sectinNode = document.getElementById(messagesSectionID);
-  var emptyCopySectionNode = sectinNode.cloneNode(false);
-  var parentOfSection = sectinNode.parentNode;
+  let sectinNode = document.getElementById(messagesSectionID);
+  let emptyCopySectionNode = sectinNode.cloneNode(false);
+  let parentOfSection = sectinNode.parentNode;
   sectinNode.remove();
   parentOfSection.appendChild(emptyCopySectionNode);
 }
@@ -276,18 +276,18 @@ function addMessageToPage(fromUser, textOfMessage, date, isFile = false) {
  *
  */
 function getMessagesFromServer(typeHistoricity, timeFoQueryInMillisecond) {
-  var loginMemeber = getCookie("LoginMemeber");
-  var nameOfCurrentInterlocutor = getNameOfCurrentInterlocutor();
+  let loginMemeber = getCookie("LoginMemeber");
+  let nameOfCurrentInterlocutor = getNameOfCurrentInterlocutor();
   if (nameOfCurrentInterlocutor == undefined) {
     return undefined; //TODO: Вероятно тут лучше возбуждать ислючение. Или отображать, что не выделен собеседник.
   }
-  var theUrl = "/ChatOnServlet/chat/messaging/?Direct=get&LoginMemeber={0}&Interlocutor={1}&timeMillisec={2}&historical={3}".printf(loginMemeber, nameOfCurrentInterlocutor, timeFoQueryInMillisecond, typeHistoricity);
-  var resultOfRequest = sendQuery(theUrl);
+  let theUrl = "/ChatOnServlet/chat/messaging/?Direct=get&LoginMemeber={0}&Interlocutor={1}&timeMillisec={2}&historical={3}".printf(loginMemeber, nameOfCurrentInterlocutor, timeFoQueryInMillisecond, typeHistoricity);
+  let resultOfRequest = sendQuery(theUrl);
 
-  var resultFromRequestAsJSON = JSON.parse(resultOfRequest);
+  let resultFromRequestAsJSON = JSON.parse(resultOfRequest);
 
-  for (var i in resultFromRequestAsJSON) {
-    var pieceOfJson = resultFromRequestAsJSON[i];
+  for (let i in resultFromRequestAsJSON) {
+    let pieceOfJson = resultFromRequestAsJSON[i];
     let isFile = (pieceOfJson["isfile"] == "true") ? true : false;
     addMessageToPage(pieceOfJson["author"], pieceOfJson["message"], pieceOfJson["messagedate"], isFile);
   }
@@ -300,10 +300,10 @@ function getMessagesFromServer(typeHistoricity, timeFoQueryInMillisecond) {
  *
  */
 function sendMessageOnServer() {
-  var loginMemeber = getCookie("LoginMemeber");
-  var nameOfCurrentInterlocutor = getNameOfCurrentInterlocutor();
-  var textOfMessage = getMessageFromInputField();
-  var textOfMessageWithDeletedSpace = new String(textOfMessage).valueOf().replace(/\s+/g, '');
+  let loginMemeber = getCookie("LoginMemeber");
+  let nameOfCurrentInterlocutor = getNameOfCurrentInterlocutor();
+  let textOfMessage = getMessageFromInputField();
+  let textOfMessageWithDeletedSpace = new String(textOfMessage).valueOf().replace(/\s+/g, '');
   if (nameOfCurrentInterlocutor == undefined) {
     alert("Пожалуйста выберите собеседника для отправки сообщения!");
     //TODO: Нужно блокировать кнопку до момента выбора пользователя и при отсутствии текста для ввода.
@@ -313,15 +313,15 @@ function sendMessageOnServer() {
     alert("Пожалуйста введите текст сообщения!");
     return;
   } else {
-    var date = new Date();
-    var millisec = date.getTime();
+    let date = new Date();
+    let millisec = date.getTime();
 
     clearMessageInputField();
-    var theUrl = "/ChatOnServlet/chat/messaging/?Direct=send&LoginMemeber={0}&Interlocutor={1}&textMessage={2}&timeMillisec={3}".printf(loginMemeber, nameOfCurrentInterlocutor, textOfMessage, millisec);
-    var resultOfRequest = sendQuery(theUrl);
+    let theUrl = "/ChatOnServlet/chat/messaging/?Direct=send&LoginMemeber={0}&Interlocutor={1}&textMessage={2}&timeMillisec={3}".printf(loginMemeber, nameOfCurrentInterlocutor, textOfMessage, millisec);
+    let resultOfRequest = sendQuery(theUrl);
     console.log(resultOfRequest);
   }
-  var dateAsString = "{0}-{1}-{2} {3}:{4}:{5}.{6}".printf(date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
+  let dateAsString = "{0}-{1}-{2} {3}:{4}:{5}.{6}".printf(date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());
   addMessageToPage(loginMemeber, textOfMessage, dateAsString);
   let divv = document.getElementsByClassName("message_container")[0];
   divv.scrollTop = divv.scrollHeight;
@@ -333,7 +333,7 @@ function sendMessageOnServer() {
  *
  */
 function getMessageFromInputField() {
-  var textForSend = document.getElementById("messageTextField").value;
+  let textForSend = document.getElementById("messageTextField").value;
   return textForSend;
 }
 
@@ -360,8 +360,8 @@ function getBoundedTimeForRequest() {
   }
   let firstTime = firstLiElement.id;
   let lastTime = lastLiElement.id;
-  var firstTimeAsMillisec = Date.parse(firstTime);
-  var secondTimeAsMillisec = Date.parse(lastTime);
+  let firstTimeAsMillisec = Date.parse(firstTime);
+  let secondTimeAsMillisec = Date.parse(lastTime);
   return [firstTimeAsMillisec, secondTimeAsMillisec];
 }
 
@@ -370,18 +370,18 @@ function getBoundedTimeForRequest() {
  */
 
 function getNewMessgaeFromServer() {
-  var boundedMessage = getBoundedTimeForRequest();
+  let boundedMessage = getBoundedTimeForRequest();
   if (!boundedMessage) {
     console.info("Не смогли получить данные по имеющимся сообщениям, для определения времени первого отображенного сообщения и последнего сообщения");
     return;
   }
-  var timeFromInMillisec = boundedMessage[1];
+  let timeFromInMillisec = boundedMessage[1];
   getMessagesFromServer("new", timeFromInMillisec);
 
   printPosition();
 }
 
-var interval = setInterval(getNewMessgaeFromServer, 30000);
+var interval = setInterval(getNewMessgaeFromServer, 1500);
 
 
 /* +++ +++
@@ -462,20 +462,36 @@ function sendSelectedFilesXHR() {
 
 
 async function sendSelectedFilesFetch() {
+  //Работа с пользователем.
+
+  let loginMemeber = getCookie("LoginMemeber");
+  let nameOfCurrentInterlocutor = getNameOfCurrentInterlocutor();
+  if (nameOfCurrentInterlocutor == undefined) {
+    alert("Пожалуйста выберите собеседника для отправки сообщения!");
+    //TODO: Нужно блокировать кнопку до момента выбора пользователя и при отсутствии текста для ввода.
+    return;
+
+  }
+
+  //Работаем с файлом
   let selectedFile = document.getElementById("ChooseFile").files;
+  if (selectedFile == undefined || selectedFile.length < 1) {
+    alert("Пожалуйста выберите файл для отправки!");
+    return;
+  }
 
   let formData = new FormData();
 
   for (var i = 0; i < selectedFile.length; i++) {
 
     console.log(">>>> Name = {0}, Size = {1}".printf(selectedFile[i].name, selectedFile[i].size));
-    let str = "ChooseFile{0}".printf(i);
+    let str = "ChooseFile{0}".printf(i); //строка для part в POST запросе.
     formData.append(str, selectedFile[i]);
   }
 
   let date = new Date();
   let timeFromInMillisec = date.getTime();
-  let user = { author: 'first@yandex.ru', ricipient: 'second@yandex.ru', timeMillisec: timeFromInMillisec };
+  let user = { author: loginMemeber, ricipient: nameOfCurrentInterlocutor, timeMillisec: timeFromInMillisec };
   formData.append("InfoAboutUsers", JSON.stringify(user));
 
   try {
@@ -484,4 +500,7 @@ async function sendSelectedFilesFetch() {
   } catch (e) {
     console.log('Huston we have problem...:', e);
   }
+  document.getElementById("ChooseFile").value = null;
+  let lable = document.getElementById("LableChooseFile");
+  lable.innerHTML = "";
 }

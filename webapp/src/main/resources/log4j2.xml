@@ -30,12 +30,14 @@
 
 	<Loggers>
 	<!-- Удобно когда нужно выводить определенную информацию для одного класса -->
-		<Logger name= "ru.andreyksu.annikonenkov.entrance.MainClass" level="debug" additivity="true">
+
+		<Logger name= "ru.andreyksu.annikonenkov.webapp.email.EmailWorker" level="debug" additivity="true">
 			<AppenderRef ref="console"/>
 		</Logger>
+				
 
-		<Root level="all" additivity="false">
-			<AppenderRef ref="console" />
+		<Root level="debug" additivity="false">
+			<!-- <AppenderRef ref="console" /> -->
 			<AppenderRef ref="file" />
 		</Root>
 	</Loggers>

@@ -7,21 +7,22 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ru.andreyksu.annikonenkov.webapp.commonParameters.InterfaceRepresentUserFromRequest;
+import ru.andreyksu.annikonenkov.webapp.commonParameters.ParametersForCoockies;
+import ru.andreyksu.annikonenkov.webapp.commonParameters.ParametersOfUser;
 
 public class SetterAndDeleterCookies {
 
-    private static final String _сookieNameOfChat = "site";
+    private static final String _сookieNameOfChat = ParametersForCoockies.Site.getParameter();
 
-    private static final String _valueNameOfChat = "MyChat";
+    private static final String _valueNameOfChat = ParametersForCoockies.NameOfChat.getParameter();
 
-    private static final String _cookieForEmailField = InterfaceRepresentUserFromRequest.Login;
+    private static final String _cookieForEmailField = ParametersOfUser.Login.getParameter();
 
     private static final int _defaultTime = 60 * 60 * 3;
 
     private String _emailFromCookie = null;
 
-    private static final Logger _log = LogManager.getLogger(SetterAndDeleterCookies.class);
+    private static Logger _log = LogManager.getLogger(SetterAndDeleterCookies.class);
 
     public void setCookiesWithTime(HttpServletResponse response, String email, int time) {
         _log.debug("Сетим cookie email = {}", email);
@@ -69,8 +70,9 @@ public class SetterAndDeleterCookies {
             }
         }
         if (presentNameChat && presentEmail) {
-            _log.debug("По Cookies прошли проверку ! Т.е. в куках есть информация по пользователю с email = {}!", _emailFromCookie);
-            setCookies(response, _emailFromCookie);//Т.е. обновляем cookie.
+            _log.debug("По Cookies прошли проверку ! Т.е. в куках есть информация по пользователю с email = {}!",
+                    _emailFromCookie);
+            setCookies(response, _emailFromCookie);// Т.е. обновляем cookie.
             return true;
         }
         return false;

@@ -182,7 +182,7 @@ section.main_block>header>a {
 /***********************************/
 
 div.message_container {
-  height: calc(100% - (50px + 100px));
+  height: calc(100% - (55px + 50px));
   /*вычетается на это section.main_block>header и на это section.main_block>footer*/
   overflow-y: auto;
   padding-right: 10px;
@@ -202,7 +202,7 @@ section>footer {
   */
   bottom: 0;
   width: 100%;
-  height: 100px;
+  height: 55px;
   padding-left: 5px;
 
   display: flex;

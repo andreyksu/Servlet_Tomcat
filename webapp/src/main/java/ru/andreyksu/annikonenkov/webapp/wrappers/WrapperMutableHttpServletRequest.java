@@ -14,11 +14,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Класс предназначен для добавления к запросу необходимых/кастомных header. Применяется для авторизации - добавляется доп. информация к запросу.
+ * Класс предназначен для добавления к запросу необходимых/кастомных header.
+ * Применяется для авторизации - добавляется доп. информация к запросу.
  */
 public class WrapperMutableHttpServletRequest extends HttpServletRequestWrapper {
 
-    private static final Logger _log = LogManager.getLogger(WrapperMutableHttpServletRequest.class);
+    private static Logger _log = LogManager.getLogger(WrapperMutableHttpServletRequest.class);
 
     private final Map<String, String> customHeaders;
 
@@ -42,12 +43,14 @@ public class WrapperMutableHttpServletRequest extends HttpServletRequestWrapper 
     public String getHeader(String name) {
         String headerValue = customHeaders.get(name);
         if (headerValue != null) {
-            _log.debug("Из нашего RequestWrapper {} = {}", name, headerValue);
+            _log.debug("Из кастомного RequestWrapper {} = {}", name, headerValue);
             return headerValue;
         }
         String tmp = ((HttpServletRequest) getRequest()).getHeader(name);
         if (tmp != null) {
             _log.debug("Из исходного Request {} = {}", name, tmp);
+        } else {
+            _log.debug("Похоже что ни в Request ни в RequestWrapper заголовка для имени '{}' нет", name, tmp);
         }
         return tmp;
     }

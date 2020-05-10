@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger;
 
 import ru.andreyksu.annikonenkov.webapp.authorization.Authorization;
 import ru.andreyksu.annikonenkov.webapp.authorization.IAuthorization;
-import ru.andreyksu.annikonenkov.webapp.commonParameters.InterfaceRepresentUserFromRequest;
+import ru.andreyksu.annikonenkov.webapp.commonParameters.ParametersOfUser;
 import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
 import ru.andreyksu.annikonenkov.webapp.worker.SetterAndDeleterCookies;
 
@@ -25,13 +25,11 @@ public class EntranceServletForLogOut extends HttpServlet {
 
     private static final long serialVersionUID = 753279128343074852L;
 
-    private final String _loginMember = InterfaceRepresentUserFromRequest.Login;
-
     private static DataSource _dataSource;
 
     private static Map<String, String> _mapOfAuthorizedUser;
 
-    private static final Logger _log = LogManager.getLogger(EntranceServletForLogOut.class);
+    private static Logger _log = LogManager.getLogger(EntranceServletForLogOut.class);
 
     @Override
     public void init() throws ServletException {
@@ -46,13 +44,14 @@ public class EntranceServletForLogOut extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         _log.debug("doGet");
 
         IAuthorization authorization = new Authorization(_dataSource, _mapOfAuthorizedUser);
         SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies();
 
-        String email = request.getParameter(_loginMember);
+        String email = request.getParameter(ParametersOfUser.Login.getParameter());
         authorization.unAuthorizedUser(email);
         workerCookies.deleteCookies((HttpServletResponse) response, email);
         _log.debug("UnLogin is Done. Cookies is pure");
@@ -60,10 +59,9 @@ public class EntranceServletForLogOut extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain");
         try (PrintWriter pw = response.getWriter()) {
-        	_log.debug("Переводим на стринцу loginPage.html");
+            _log.debug("Переводим на стринцу loginPage.html");
             pw.println("/ChatOnServlet/loginPage.html");
             pw.flush();
-            // pw.close(); //Больше не нужен, так как создается объект внутри try.
         } catch (Exception e) {
             _log.catching(e);
         }
@@ -71,12 +69,14 @@ public class EntranceServletForLogOut extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        _log.info("doPost");
+        _log.info("Unimplemented method - doPost");
     }
 
     @Override
     public void destroy() {
         _log.info("destroy");
+        _log = null;
+        _dataSource = null;
     }
 
 }

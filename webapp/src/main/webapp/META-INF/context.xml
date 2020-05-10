@@ -10,5 +10,36 @@
 	maxWait="10000"
 	username="testov"
 	password="testov"
-	factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" />
+	factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" />	
+
+	<Resource
+	name="mail/Session"
+	type="javax.mail.Session"
+	auth="Container"
+	mail.transport.protocol="smtp"
+	mail.smtp.host="smtp.yandex.ru"
+	mail.smtp.port="465"
+	mail.smtp.socketFactory.port="465"
+	mail.smtp.auth="true"
+	mail.smtp.starttls.enable="true"
+	mail.smtp.ssl.enable="true"
+	mail.smtp.socketFactory.class="javax.net.ssl.SSLSocketFactory"
+	mail.smtp.user="yyy@yandex.ru"	
+	mail.from="yyy@yandex.ru"	
+	
+	mail.store.protocol="imap"
+	mail.imap.host="imap.yandex.ru"
+	mail.imap.starttls.enable="true"
+	mail.imap.ssl.enable="true"
+	mail.imap.port="993"
+	mail.imap.socketFactory.port="993"
+	mail.imap.socketFactory.class="javax.net.ssl.SSLSocketFactory"
+	mail.imap.socketFactory.fallback="false"
+	mail.imap.user="yyy@yandex.ru"
+	password="yyy"/>
 </Context>
+<!-- 
+pop.yandex.ru
+SSL
+995
+-->

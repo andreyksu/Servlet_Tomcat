@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import ru.andreyksu.annikonenkov.webapp.authorization.Authorization;
 import ru.andreyksu.annikonenkov.webapp.authorization.IAuthorization;
-import ru.andreyksu.annikonenkov.webapp.commonParameters.InterfaceRepresentUserFromRequest;
+import ru.andreyksu.annikonenkov.webapp.commonParameters.ParametersOfUser;
 import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
 import ru.andreyksu.annikonenkov.webapp.worker.SetterAndDeleterCookies;
 
@@ -24,15 +24,13 @@ public class EntranceServletForAuthorization extends HttpServlet {
 
     private static final long serialVersionUID = -305400761676131269L;
 
-    private final String _loginMember = InterfaceRepresentUserFromRequest.Login;
-
-    private final String _passwordMember = InterfaceRepresentUserFromRequest.Password;
+    private final String _passwordMember = ParametersOfUser.Password.getParameter();
 
     private static DataSource _dataSource;
 
     private static Map<String, String> _mapOfAuthorizedUser;
 
-    private static final Logger _log = LogManager.getLogger(EntranceServletForAuthorization.class);
+    private static Logger _log = LogManager.getLogger(EntranceServletForAuthorization.class);
 
     @Override
     public void init() throws ServletException {
@@ -47,13 +45,14 @@ public class EntranceServletForAuthorization extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, ServletException {
         _log.debug("doGet");
 
         IAuthorization authorization = new Authorization(_dataSource, _mapOfAuthorizedUser);
         SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies();
 
-        String email = request.getParameter(_loginMember);
+        String email = request.getParameter(ParametersOfUser.Login.getParameter());
         String password = request.getParameter(_passwordMember);
         _log.debug(String.format("LoginMemeber = %s  PasswordMember = %s", email, password));
         if (authorization.isAuthorizedUserInSystem(email, password)) {
@@ -70,12 +69,14 @@ public class EntranceServletForAuthorization extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        _log.info("doPost");
+        _log.info("Unimplemented method - doPost");
     }
 
     @Override
     public void destroy() {
         _log.info("destroy");
+        _log = null;
+        _dataSource = null;
     }
 
 }

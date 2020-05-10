@@ -20,7 +20,7 @@ import ru.andreyksu.annikonenkov.webapp.userrepresent.user.User;
 
 public class WorkerWithUser implements IWorkerWithUser {
 
-    private static final Logger _log = LogManager.getLogger(WorkerWithUser.class);
+    private static Logger _log = LogManager.getLogger(WorkerWithUser.class);
 
     private final DataSource _dataSourcel;
 
@@ -46,25 +46,29 @@ public class WorkerWithUser implements IWorkerWithUser {
     }
 
     /**
-     * Проверяет, есть ли пользователь в системе. Проверка ведется по {@code email}.
+     * Проверяет, есть ли пользователь в системе. Проверка ведется по
+     * {@code email}.
      * <p>
-     * После себя закрывает {@link java.sql.PreparedStatement} и {@link java.sql.Connection}
+     * После себя закрывает {@link java.sql.PreparedStatement} и
+     * {@link java.sql.Connection}
      * 
-     * @return Возвращает {@code true} если пользователь найден в БД. В ином случае {@code false}.
+     * @return Возвращает {@code true} если пользователь найден в БД. В ином
+     *         случае {@code false}.
      * @throws SQLException
      */
     @Override
     public IUser getUserByEmail(String email) throws IOException {
-        _log.debug("Проверка наличия пользовтеля в БД");
+        _log.debug("Выполняем проверку наличия пользовтеля в БД");
         if (!User.isValidEmail(email))
             return null;
-        try (Connection connection = _dataSourcel.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forIsExistUserInSystem)) {
+        try (Connection connection = _dataSourcel.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forIsExistUserInSystem)) {
             preparedStatement.setString(1, email);
             ResultSet result = preparedStatement.executeQuery();
             IUser user = new User();
             return user.fillUserFromRequest(result) ? user : null;
         } catch (SQLException e) {
-            _log.error("Ошибка при проверке наличия пользователя в системе. Ошибка SQLException.", e);
+            _log.error("Ошибка при проверке наличия пользователя в БД. Ошибка SQLException.", e);
             throw new IOException(e);
         }
     }
@@ -73,15 +77,19 @@ public class WorkerWithUser implements IWorkerWithUser {
      * Возвращает список всех пользователей (активных или неактивных)
      * <p>
      * 
-     * @param activity - <b>true</b> - если хотим получить активных пользователей, <b>false</b> - если неактивных
+     * @param activity - <b>true</b> - если хотим получить активных
+     *            пользователей, <b>false</b> - если неактивных
      */
 
     @Override
     public List<String> getListOfUsers(boolean activity) throws IOException {
         _log.debug("Возвращаем список пользователей");
         List<String> innerList = new ArrayList<>();
-        try (Connection connection = _dataSourcel.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forUserList)) {
-            preparedStatement.setBoolean(1, activity);// Интересно, что нужно именно setBoolean и setString не подходит.
+        try (Connection connection = _dataSourcel.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forUserList)) {
+            preparedStatement.setBoolean(1, activity);// Интересно, что нужно
+                                                      // именно setBoolean и
+                                                      // setString не подходит.
             ResultSet result = preparedStatement.executeQuery();
             String tmp = null;
             while (result.next()) {
@@ -96,15 +104,18 @@ public class WorkerWithUser implements IWorkerWithUser {
     }
 
     /**
-     * Производится регистрация пользователя в системе, путем добавления записи в БД. Предварительно проверяется есть ли данный пользователь в системе. И не
-     * является ли пустыми значения полей.
+     * Производится регистрация пользователя в системе, путем добавления записи
+     * в БД. Предварительно проверяется есть ли данный пользователь в системе. И
+     * не является ли пустыми значения полей.
      * <p>
-     * После себя закрывает {@link java.sql.PreparedStatement} и {@link java.sql.Connection}
+     * После себя закрывает {@link java.sql.PreparedStatement} и
+     * {@link java.sql.Connection}
      * 
      * @param password - Пароль пользователя
      * @param name - Имя пользователя.
-     * @return {@code true} - если регистрация прошла успешно. {@code false} - если авторизация данный пользователь уже существует в системе или же
-     *         {@code email} не прошел валидацию.
+     * @return {@code true} - если регистрация прошла успешно. {@code false} -
+     *         если авторизация данный пользователь уже существует в системе или
+     *         же {@code email} не прошел валидацию.
      * @throws SQLException
      */
     @Override
@@ -112,9 +123,11 @@ public class WorkerWithUser implements IWorkerWithUser {
         _log.debug("Начинаем регистрировать пользователя!!!");
         if (!User.isValidFieldsForCreateUser(email, password, name) || getUserByEmail(email) != null) {
             _log.error("Поля пользователя не прошли проверку, или же пользователь уже есть в системе");
-            return null;//Возвращаем null для создаваемого пользователя, так как он создан не будет.
+            return null;// Возвращаем null для создаваемого пользователя, так
+                        // как он создан не будет.
         }
-        try (Connection connection = _dataSourcel.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forRegistrateUser)) {
+        try (Connection connection = _dataSourcel.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forRegistrateUser)) {
             preparedStatement.setString(1, email);
             preparedStatement.setString(2, password);
             preparedStatement.setString(3, name);
@@ -124,17 +137,21 @@ public class WorkerWithUser implements IWorkerWithUser {
             _log.error("Ошибка при добавлениии пользователя", e);
             throw new IOException(e);
         }
-        return getUserByEmail(email);//После вставки еще раз получаем пользователя и возвращаем его.
+        return getUserByEmail(email);// После вставки еще раз получаем
+                                     // пользователя и возвращаем его.
     }
 
     /**
      * Устанавливает или сбрасывает активность пользователя.
      * <p>
-     * После себя закрывает {@link java.sql.PreparedStatement} и {@link java.sql.Connection}
+     * После себя закрывает {@link java.sql.PreparedStatement} и
+     * {@link java.sql.Connection}
      * 
-     * @param stat - true - если нужно активаировать, false - если нужно деактивировать.
-     * @return {@code true} - если активация/деактивация прошла успешно. {@code false} - если данного пользователя нет в системе, или если же пользовтеля не
-     *         прошел валидацию по {@code email}.
+     * @param stat - true - если нужно активаировать, false - если нужно
+     *            деактивировать.
+     * @return {@code true} - если активация/деактивация прошла успешно.
+     *         {@code false} - если данного пользователя нет в системе, или если
+     *         же пользовтеля не прошел валидацию по {@code email}.
      * @throws SQLException
      */
     @Override
@@ -146,7 +163,8 @@ public class WorkerWithUser implements IWorkerWithUser {
                 return false;
             }
         }
-        try (Connection connection = _dataSourcel.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forSetUserActive)) {
+        try (Connection connection = _dataSourcel.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forSetUserActive)) {
             preparedStatement.setString(1, status);
             preparedStatement.setString(2, email);
             preparedStatement.executeUpdate();
@@ -161,30 +179,34 @@ public class WorkerWithUser implements IWorkerWithUser {
     /**
      * Предоставляет/изымает права Администратора.
      * <p>
-     * После себя закрывает {@link java.sql.PreparedStatement} и {@link java.sql.Connection}
+     * После себя закрывает {@link java.sql.PreparedStatement} и
+     * {@link java.sql.Connection}
      * 
      * @param stat - true - если даем права Администратора <br>
      *            false - если изымаем права Администратора.
      * @return {@code true} - если предоставление/изъятие прошло успешно.. <br>
-     *         {@code false} - если данного пользователя нет в системе, или если же пользовтеля не прошел валидацию по <b>email</b>.
+     *         {@code false} - если данного пользователя нет в системе, или если
+     *         же пользовтеля не прошел валидацию по <b>email</b>.
      * @throws SQLException
      */
     @Override
     public boolean grandUserAdminRole(String email, boolean admin) throws IOException {
-        _log.debug("Устанавливаем/изымаем пользователю права Администратора!!!");
+        _log.debug("Устанавливаем/изымаем права Администратора!!!");
         String status = admin ? "true" : "false";
         if (resultOfCheckExistUser.get("isadmin") == null) {
             if (getUserByEmail(email) == null) {
                 return false;
             }
         }
-        try (Connection connection = _dataSourcel.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forGrandUserAdminRole)) {
+        try (Connection connection = _dataSourcel.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forGrandUserAdminRole)) {
             preparedStatement.setString(1, status);
             preparedStatement.setString(2, email);
             int count = preparedStatement.executeUpdate();
-            _log.debug(String.format("Удалось изменить =%4d записей, при награждении пользователя правадми Администратора", count));
+            _log.debug(String.format(
+                    "Удалось изменить =%4d записей, при награждении пользователя правадми Администратора", count));
         } catch (SQLException e) {
-            _log.error("Ошибка при изменении записи пользователя Поле 'isadmin' .", e);
+            _log.error("Ошибка при изменении записи пользователя Поле 'isadmin'.", e);
             throw new IOException(e);
         }
         return true;

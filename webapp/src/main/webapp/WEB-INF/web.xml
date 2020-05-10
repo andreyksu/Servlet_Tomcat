@@ -21,7 +21,8 @@
 	</filter>
 
 	<filter-mapping>
-	<!--  Соответственно будет выполнено для всех картинок, css, js итд. Стоит обратить это в логах. -->
+		<!-- Соответственно будет выполнено для всех картинок, css, js итд. Стоит 
+			обратить это в логах. -->
 		<filter-name>offCacheFirstFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
@@ -30,7 +31,7 @@
 		<filter-name>addHeaderToRequestForMessagingServlet</filter-name>
 		<servlet-name>entranceServletForMessaging</servlet-name>
 	</filter-mapping>
-	
+
 	<filter-mapping>
 		<filter-name>addHeaderToRequestForMessagingServlet</filter-name>
 		<servlet-name>entranceServletForGetUsers</servlet-name>
@@ -105,9 +106,6 @@
 	</servlet-mapping>
 
 
-
-
-
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
@@ -128,6 +126,15 @@
 		<!-- Тип, возвращаемого ресурса -->
 		<res-type>javax.sql.DataSource</res-type>
 		<!-- Описываем, кто будет отвечать за авторизацию. В нашем случае контейнер. -->
+		<res-auth>Container</res-auth>
+	</resource-ref>
+
+	<resource-ref>
+		<description>Resource reference to a factory for javax.mail.Session
+			instances that may be used for sending electronic mail messages,
+			preconfigured to connect to the appropriate SMTP server.</description>
+		<res-ref-name>mail/Session</res-ref-name>
+		<res-type>javax.mail.Session</res-type>
 		<res-auth>Container</res-auth>
 	</resource-ref>
 

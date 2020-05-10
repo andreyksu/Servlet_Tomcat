@@ -14,21 +14,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Первый фильтр в цепочке. Только отключает кэш, для избежания моментов, когда часть страницы не обновляется. Проявлялось при тестировании (при изменении
- * страницы или скриптов, не подтягивались изменения, а брались из кэша). Редиректит на следующий фильтр, так как цель только отключить кэш. Видимо выполняется
- * каждый раз, даже при получении js, css для страницы. FirstFilter не выполняется для каждого фафйла так как натравлена только на MainServlet
+ * Первый фильтр в цепочке. Только отключает кэш, для избежания моментов, когда
+ * часть страницы не обновляется. Проявлялось при тестировании (при изменении
+ * страницы или скриптов, не подтягивались изменения, а брались из кэша).
+ * Редиректит на следующий фильтр, так как цель только отключить кэш. Видимо
+ * выполняется каждый раз, даже при получении js, css для страницы. FirstFilter
+ * не выполняется для каждого фафйла так как натравлена только на MainServlet
  */
 public class OffCacheFirstFilter implements Filter {
 
-    private static final Logger _log = LogManager.getLogger(OffCacheFirstFilter.class);
+    private static Logger _log = LogManager.getLogger(OffCacheFirstFilter.class);
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        _log.debug("Init");
+        _log.info("Method Init in class - OffCacheFirstFilter");
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
         HttpServletResponse httpresp = (HttpServletResponse) response;
         _log.debug("Перед добавлением Header для отключения кэша страниц");
@@ -44,7 +48,9 @@ public class OffCacheFirstFilter implements Filter {
 
     @Override
     public void destroy() {
-        _log.debug("Destroy");
+        _log.debug("Destroy OffCacheFirstFilter");
+        _log = null;
+
     }
 
 }

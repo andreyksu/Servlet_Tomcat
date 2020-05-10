@@ -15,7 +15,7 @@ public class Authorization implements IAuthorization {
 
     private final Map<String, String> _mapOfAuthorizedUser;
 
-    private static final Logger _log = LogManager.getLogger(Authorization.class);
+    private static Logger _log = LogManager.getLogger(Authorization.class);
 
     public Authorization(DataSource dataSource, Map<String, String> mapOfAuthorizedUser) {
         _dataSource = dataSource;
@@ -23,51 +23,61 @@ public class Authorization implements IAuthorization {
     }
 
     /**
-     * Предварительно проверяет, есть ли пользователь в системе. Поиск ведется по email. Если нашли такой {@code email}, то проверяем пароль по равенству строк,
-     * что вытащили из базы с тем что передали в метод.
+     * Предварительно проверяет, есть ли пользователь в системе. Поиск ведется
+     * по email. Если нашли такой {@code email}, то проверяем пароль по
+     * равенству строк, что вытащили из базы с тем что передали в метод.
      * <p>
-     * Если пользватель был успешно авторизован, то запись добавляется в {@link java.util.Map}. Реализация которого выполнане в виде
+     * Если пользватель был успешно авторизован, то запись добавляется в
+     * {@link java.util.Map}. Реализация которого выполнане в виде
      * {@link java.util.Collections.SynchronizedMap}
      * 
      * @param email - Email пользователя, он же и выступает как логин.
      * @param password - Пароль пользователя.
-     * @return {@code true} - если удалось авторизовать и такой пользователь был найден. {@code false} - в ином случае (не был найден пользователь, не совпал
-     *         пароль)
+     * @return {@code true} - если удалось авторизовать и такой пользователь был
+     *         найден. {@code false} - в ином случае (не был найден
+     *         пользователь, не совпал пароль)
      */
     @Override
     public boolean isAuthorizedUserInSystem(String email, String password) throws IOException {
-        _log.debug("Проверяем, авторизован ли пользователь. Метод isAuthorizedUserInSystem(String, String)");
+        _log.info("Проверяем, авторизован ли пользователь. Метод isAuthorizedUserInSystem(String, String)");
         if (isPresentUserInLocalMapAsAuthorized(email, password)) {
             _log.debug("Пользователь есть в локальном кэше Members, проверка проводилась по email и password");
             return true;
         }
+
         _log.debug("Пользователь не прошел проверку по email и password в локальном кэше, будем смотреть в БД");
         IWorkerWithUser workerWithUser = new WorkerWithUser(_dataSource);
         String passwordOfUser = null;
         IUser user = workerWithUser.getUserByEmail(email);
         if (user == null) {
-            _log.debug("Похоже, что не удалось создать/вернуть инстанс пользователя.");
+            _log.warn("Похоже, что не удалось вернуть/найти пользователя = {} в БД.", email);
             return false;
         }
         passwordOfUser = user.getPassword();
         if (passwordOfUser != null && passwordOfUser.equals(password) && user.isActive()) {
-            _log.debug("Пользователь по БД прошел проверку. Помещаем в локальный кэш");
+            _log.info("Пользователь по БД прошел проверку и является активным. Помещаем в локальный кэш");
             _mapOfAuthorizedUser.put(email, password);
             return true;
         }
-        _log.debug("Пользователь ни по БД ни в локальном кэше не прошел проверку");
+        _log.warn("Пользователь ни по БД ни в локальном кэше не прошел проверку");
         return false;
     }
 
     /**
-     * Метод проверяет авторизован ли пользователь. Проверка ведется во внутреннем статическом поле - потоко-безопасном {@code Map}.
+     * Метод проверяет авторизован ли пользователь. Проверка ведется во
+     * внутреннем статическом поле - потоко-безопасном {@code Map}.
      * <p>
-     * При выполнении процедуры авторизации, в данный {@code Map} добавляется запись, при выходе происходит удаление из {@code Map} соответствующей записи.
+     * При выполнении процедуры авторизации, в данный {@code Map} добавляется
+     * запись, при выходе происходит удаление из {@code Map} соответствующей
+     * записи.
      * <p>
-     * Применяется при обмене сообщениями. Быстрая проверка при каждой отправки/приеме сообщений.
+     * Применяется при обмене сообщениями. Быстрая проверка при каждой
+     * отправки/приеме сообщений.
      * 
      * @param email - Email пользователя, он же и выступает как логин.
-     * @return {@code true} - если Если запись в Map присутствует. {@code false} - если запись не найдена. В таком случае предварительно терубется авторизация.
+     * @return {@code true} - если Если запись в Map присутствует. {@code false}
+     *         - если запись не найдена. В таком случае предварительно терубется
+     *         авторизация.
      */
 
     @Override
@@ -81,30 +91,40 @@ public class Authorization implements IAuthorization {
     }
 
     /**
-     * Метод проверяет авторизацию во внутреннем статическом поле - потоко-безопасном {@code Map}. При процедуре авторизации
-     * {@link #isAuthorizedUserInSystem(String, String)}, в данный {@code Map} заносится запись, при выходе происходит удаление из {@code Map} записи.
+     * Метод проверяет авторизацию во внутреннем статическом поле -
+     * потоко-безопасном {@code Map}. При процедуре авторизации
+     * {@link #isAuthorizedUserInSystem(String, String)}, в данный {@code Map}
+     * заносится запись, при выходе происходит удаление из {@code Map} записи.
      * <p>
-     * Применяется при переходе со страницы <b>авторизации</b> В частности пользователь был авторизован, закрыл страницу, перешл на основную страинцу
-     * приложения, тем самым попав на страницу авторизации. Дабы не идти снова в БД мы проверяем данногопользователя во внутреннем {@code Map}.
+     * Применяется при переходе со страницы <b>авторизации</b> В частности
+     * пользователь был авторизован, закрыл страницу, перешл на основную
+     * страинцу приложения, тем самым попав на страницу авторизации. Дабы не
+     * идти снова в БД мы проверяем данногопользователя во внутреннем
+     * {@code Map}.
      * 
      * @param email - Email пользователя, он же и выступает как логин.
      * @param password - Password пользователя.
-     * @return {@code true} - если Если запись в Map присутствует. {@code false} - если запись не найдена. В таком случае предварительно терубется авторизация.
+     * @return {@code true} - если Если запись в Map присутствует. {@code false}
+     *         - если запись не найдена. В таком случае предварительно терубется
+     *         авторизация.
      * @see IAuthorization#isPresentUserInLocalMapAsAuthorized(String, String)
      */
     @Override
     public boolean isPresentUserInLocalMapAsAuthorized(String email, String password) {
-        _log.debug(String.format("Проверяем в локальном кэше наличие авторизованного пользователя. Проверка по логину и паролю!"));
+        _log.debug(String.format(
+                "Проверяем в локальном кэше наличие авторизованного пользователя. Проверка по логину и паролю!"));
         String passOfAuthUser = _mapOfAuthorizedUser.get(email);
         if (passOfAuthUser != null && passOfAuthUser.equals(password)) {
-            _log.debug("Полученный пароль = {} И извлеченный пароль = {} Для логина = {}", password, passOfAuthUser, email);
+            _log.debug("Полученный пароль = {} И извлеченный пароль = {} Для логина = {}", password, passOfAuthUser,
+                    email);
             return true;
         }
         return false;
     }
 
     /**
-     * Метод удаляет запись из внутреннего {@code Map} - который представляет из себя коллекцию авторизованных пользвателей.
+     * Метод удаляет запись из внутреннего {@code Map} - который представляет из
+     * себя коллекцию авторизованных пользвателей.
      * 
      * @param email - Email пользователя, он же и выступает как логин.
      */
@@ -115,7 +135,9 @@ public class Authorization implements IAuthorization {
     }
 
     /**
-     * Регистрирует (добавляет пользователя в БД). При этом во вунтреннюю {@code Map} запись не добавляется в данном методе. Авторизовывать нужно отдельно
+     * Регистрирует (добавляет пользователя в БД). При этом во вунтреннюю
+     * {@code Map} запись не добавляется в данном методе. Авторизовывать нужно
+     * отдельно
      * 
      * @param email - Email пользователя, он же и выступает как логин.
      * @param password - Password пользователя.

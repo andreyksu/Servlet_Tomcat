@@ -17,8 +17,7 @@ import javax.sql.DataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
-
-import ru.andreyksu.annikonenkov.webapp.commonParameters.InterfaceRepresentUserFromRequest;
+import ru.andreyksu.annikonenkov.webapp.commonParameters.ParametersOfUser;
 import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
 import ru.andreyksu.annikonenkov.webapp.userrepresent.WorkerWithUser;
 import ru.andreyksu.annikonenkov.webapp.wrappers.WrapperMutableHttpServletRequest;
@@ -27,11 +26,9 @@ public class EntranceServletForGetUsers extends HttpServlet {
 
     private static final long serialVersionUID = -4138202365466220495L;
 
-    private final String _loginMember = InterfaceRepresentUserFromRequest.Login;
-
     private static DataSource _dataSource;
 
-    private static final Logger _log = LogManager.getLogger(EntranceServletForGetUsers.class);
+    private static Logger _log = LogManager.getLogger(EntranceServletForGetUsers.class);
 
     @Override
     public void init() throws ServletException {
@@ -49,7 +46,7 @@ public class EntranceServletForGetUsers extends HttpServlet {
         _log.debug("doGet");
 
         WrapperMutableHttpServletRequest wrappedRequest = (WrapperMutableHttpServletRequest) request;
-        String emailOfCurrentUser = wrappedRequest.getHeader(_loginMember);
+        String emailOfCurrentUser = wrappedRequest.getHeader(ParametersOfUser.Login.getParameter());
 
         WorkerWithUser workerWithUser = new WorkerWithUser(_dataSource);
         List<String> listOfUser = workerWithUser.getListOfUsers(true);
@@ -59,9 +56,10 @@ public class EntranceServletForGetUsers extends HttpServlet {
         _log.debug("Получили следующий список пользователей: {}", listOfActiveUserAsString);
 
         JSONArray array = new JSONArray();
-        for (String str : listOfUser) {
-            array.add(str);
-        }
+        array.addAll(listOfUser);
+        /*
+         * for (String str : listOfUser) { array.add(str); }
+         */
         listOfActiveUserAsString = array.toJSONString();
         _log.debug("Получили следующий список пользователей JSON: {}", listOfActiveUserAsString);
         try (OutputStream outputStreamForResponse = response.getOutputStream();
@@ -76,12 +74,14 @@ public class EntranceServletForGetUsers extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse responce) throws IOException {
-        _log.info("doPost");
+        _log.info("Unimplemented method - doPost");
     }
 
     @Override
     public void destroy() {
         _log.info("destroy");
+        _log = null;
+        _dataSource = null;
     }
 
 }

@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import ru.andreyksu.annikonenkov.webapp.authorization.Authorization;
 import ru.andreyksu.annikonenkov.webapp.authorization.IAuthorization;
-import ru.andreyksu.annikonenkov.webapp.commonParameters.InterfaceRepresentUserFromRequest;
+import ru.andreyksu.annikonenkov.webapp.commonParameters.ParametersOfUser;
 import ru.andreyksu.annikonenkov.webapp.postgressql.DataSourceProvider;
 import ru.andreyksu.annikonenkov.webapp.worker.SetterAndDeleterCookies;
 
@@ -28,13 +28,7 @@ public class EntranceServletForRegistration extends HttpServlet {
 
     private static Map<String, String> _mapOfAuthorizedUser;
 
-    private final String _loginMember = InterfaceRepresentUserFromRequest.Login;
-
-    private final String _passwordMember = InterfaceRepresentUserFromRequest.Password;
-
-    private final String _nameMember = InterfaceRepresentUserFromRequest.Name;
-
-    private static final Logger _log = LogManager.getLogger(EntranceServletForRegistration.class);
+    private static Logger _log = LogManager.getLogger(EntranceServletForRegistration.class);
 
     @Override
     public void init() throws ServletException {
@@ -53,21 +47,22 @@ public class EntranceServletForRegistration extends HttpServlet {
 
         _log.debug("doGet");
 
-        String email = request.getParameter(_loginMember);
-        String password = request.getParameter(_passwordMember);
-        String name = request.getParameter(_nameMember);
+        String email = request.getParameter(ParametersOfUser.Login.getParameter());
+        String password = request.getParameter(ParametersOfUser.Password.getParameter());
+        String name = request.getParameter(ParametersOfUser.Name.getParameter());
 
         IAuthorization authorization = new Authorization(_dataSource, _mapOfAuthorizedUser);
         SetterAndDeleterCookies workerCookies = new SetterAndDeleterCookies();
         HttpServletResponse tmp = (HttpServletResponse) response;
 
         if (authorization.registrateUserInSystem(email, password, name)) {
-            _log.debug("Удалось пройти регистрацию пользователя, теперь проверям, авторизован ли пользователь и добавляем в cookies");
+            _log.debug("Удалось пройти регистрацию пользователя, теперь проверям, "
+                    + "авторизован ли пользователь и добавляем в cookies");
             authorization.isAuthorizedUserInSystem(email, password);
             workerCookies.setCookies((HttpServletResponse) response, email);
             tmp.sendRedirect("/ChatOnServlet/html/messagePage.html");
         } else {
-            _log.debug("Зарегистрироваться не смогли, редиректимся в errorRegPage");
+            _log.warn("Зарегистрироваться не смогли, редиректимся в errorRegPage");
             tmp.sendRedirect("/ChatOnServlet/html/errorRegPage.html");
         }
     }
@@ -80,6 +75,8 @@ public class EntranceServletForRegistration extends HttpServlet {
     @Override
     public void destroy() {
         _log.info("destroy");
+        _log = null;
+        _dataSource = null;
     }
 
 }

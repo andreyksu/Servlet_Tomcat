@@ -19,11 +19,13 @@ public class Message implements IMessage {
 
     private final DataSource _dataSource;
 
-    private static final Logger _log = LogManager.getLogger(Message.class);
+    private static Logger _log = LogManager.getLogger(Message.class);
 
-    private static final String _forInsertNewMessage = "INSERT INTO messages(author, uuid, message, messagedate, is_file) values (?, ?, ?, ?, ?)";
+    private static final String _forInsertNewMessage =
+            "INSERT INTO messages(author, uuid, message, messagedate, is_file) values (?, ?, ?, ?, ?)";
 
-    private static final String _forInsertRecipient = "INSERT INTO matrix_message_user (email_recipient, uuid_message) values (?, ?)";
+    private static final String _forInsertRecipient =
+            "INSERT INTO matrix_message_user (email_recipient, uuid_message) values (?, ?)";
 
     private static final String _forSelectMessageToPairInterlocutorAsHistory =
             "SELECT messages.author, matrix.email_recipient, messages.message, messages.messagedate, messages.is_file FROM matrix_message_user AS matrix JOIN messages ON matrix.uuid_message = messages.uuid WHERE ((matrix.email_recipient = ? AND messages.author = ?) OR (matrix.email_recipient = ? AND messages.author = ?)) and messages.messagedate < ? ORDER BY messages.messagedate ASC LIMIT 50";
@@ -31,7 +33,8 @@ public class Message implements IMessage {
     private static final String _forSelectMessageToPairInterlocutorAsNew =
             "SELECT messages.author, matrix.email_recipient, messages.message, messages.messagedate, messages.is_file FROM matrix_message_user AS matrix JOIN messages ON matrix.uuid_message = messages.uuid WHERE ((matrix.email_recipient = ? AND messages.author = ?) OR (matrix.email_recipient = ? AND messages.author = ?)) and messages.messagedate > ? ORDER BY messages.messagedate ASC";
 
-    private static final String _forInsertNewMessageAsFile = "INSERT INTO message_as_file(author, uuid, nameoffile, contentoffile, messagedate) values (?, ?, ?, ?, ?)";
+    private static final String _forInsertNewMessageAsFile =
+            "INSERT INTO message_as_file(author, uuid, nameoffile, contentoffile, messagedate) values (?, ?, ?, ?, ?)";
 
     private static final String _forGetFileFromDB = "SELECT contentoffile FROM  message_as_file WHERE uuid = ?";
 
@@ -45,14 +48,16 @@ public class Message implements IMessage {
      * @throws IOException
      */
     @Override
-    public void newMessageToRecipient(String authorEmail, String message, String recipientEmail, long timeMillisecParamAsLong, boolean isFile) throws IOException {
+    public void newMessageToRecipient(String authorEmail, String message, String recipientEmail,
+            long timeMillisecParamAsLong, boolean isFile) throws IOException {
         UUID uuid = UUID.randomUUID();
         String uuidAsSring = uuid.toString();
 
         java.sql.Timestamp timeStamp = new java.sql.Timestamp(timeMillisecParamAsLong);
         _log.debug("TimeAsLong = {} TimeStamp = {}", timeMillisecParamAsLong, timeStamp.toString());
 
-        try (Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forInsertNewMessage)) {
+        try (Connection connection = _dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forInsertNewMessage)) {
             preparedStatement.setString(1, authorEmail);
             preparedStatement.setString(2, uuidAsSring);
             preparedStatement.setString(3, message);
@@ -65,7 +70,8 @@ public class Message implements IMessage {
             throw new IOException(e);
         }
 
-        try (Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forInsertRecipient)) {
+        try (Connection connection = _dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forInsertRecipient)) {
             preparedStatement.setString(1, recipientEmail);
             preparedStatement.setString(2, uuidAsSring);
             int countRow = preparedStatement.executeUpdate();
@@ -78,16 +84,19 @@ public class Message implements IMessage {
     }
 
     @Override
-    public String getMessagesFromRecipient(String authorEmail, String recipient, long startDate, String aTypeMessgaes) throws IOException {
+    public String getMessagesFromRecipient(String authorEmail, String recipient, long startDate, String aTypeMessgaes)
+            throws IOException {
         String result = null;
-        String aQuery = aTypeMessgaes.equals("new") ? _forSelectMessageToPairInterlocutorAsNew : _forSelectMessageToPairInterlocutorAsHistory;
+        String aQuery = aTypeMessgaes.equals("new") ? _forSelectMessageToPairInterlocutorAsNew
+                : _forSelectMessageToPairInterlocutorAsHistory;
 
         long startDateTmp = startDate;
         java.sql.Timestamp timeStamp = new java.sql.Timestamp(startDateTmp);
         _log.debug("TimeAsLong = {}", startDateTmp);
         _log.debug("TimeStamp = {}", timeStamp.toString());
 
-        try (Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(aQuery)) {
+        try (Connection connection = _dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(aQuery)) {
 
             preparedStatement.setString(1, authorEmail);
             preparedStatement.setString(2, recipient);
@@ -140,12 +149,15 @@ public class Message implements IMessage {
     /**
      * Получаем сообщения за указанный срок (диапозон времени)
      * <p>
-     * После себя закрывает {@link java.sql.PreparedStatement} и {@link java.sql.Connection}
+     * После себя закрывает {@link java.sql.PreparedStatement} и
+     * {@link java.sql.Connection}
      * 
      * @param email - Индификатор автора сообщения.
      * @param startDate - Время начала диапозона для выбираемых сообщений.
      * @param stopDate - Время окончания диапозона для выбираемых сообщений.
-     * @return {@code String[]} - Список сообщений. {@code null} - если авторизация данный пользователь уже существует в системе или же {@code email} не прошел валидацию.
+     * @return {@code String[]} - Список сообщений. {@code null} - если
+     *         авторизация данный пользователь уже существует в системе или же
+     *         {@code email} не прошел валидацию.
      * @throws SQLException
      */
     @Override
@@ -155,9 +167,13 @@ public class Message implements IMessage {
     }
 
     /**
-     * Вставляет новое сообщени в виде файла.
+     * Вставляет новое сообщени в виде файла. Используется метод
+     * newMessageToRecipient(...) для трассировки файла на сообщение - т.е. для
+     * каждого файла записывается сообщение вида fileName##UUID. Длелается это
+     * для того, что бы проще соблюсти очередность/порядок сообщений и файлов.
      * <p>
-     * После себя закрывает {@link java.sql.PreparedStatement} и {@link java.sql.Connection}
+     * После себя закрывает {@link java.sql.PreparedStatement} и
+     * {@link java.sql.Connection}
      * 
      * @param authorEmail - Индификатор автора сообщения.
      * @param fileName - Имя файла.
@@ -170,15 +186,20 @@ public class Message implements IMessage {
      */
 
     @Override
-    public String newMessageToRecipientAsFile(String authorEmail, String fileName, String recipientEmail, long timeMillisecParamAsLong, InputStream is, long sizeOfFile) throws IOException {
+    public String newMessageToRecipientAsFile(String authorEmail, String fileName, String recipientEmail,
+            long timeMillisecParamAsLong, InputStream is, long sizeOfFile) throws IOException {
 
         UUID uuid = UUID.randomUUID();
         String uuidAsSring = uuid.toString();
 
         java.sql.Timestamp timeStamp = new java.sql.Timestamp(timeMillisecParamAsLong);
-        _log.debug("TimeAsLong = {}, TimeAsTimeStamp = {} fileName = {} sizeOfFile = {} author = {} recpient = {}", timeMillisecParamAsLong, timeStamp.toString(), fileName, sizeOfFile, authorEmail, recipientEmail);
+        _log.debug(
+                "Полученные данные из запроса: TimeAsLong = {}, "
+                        + "TimeAsTimeStamp = {}, fileName = {}, sizeOfFile = {}, author = {}, recpient = {}",
+                timeMillisecParamAsLong, timeStamp.toString(), fileName, sizeOfFile, authorEmail, recipientEmail);
 
-        try (Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forInsertNewMessageAsFile)) {
+        try (Connection connection = _dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forInsertNewMessageAsFile)) {
             preparedStatement.setString(1, authorEmail);
             preparedStatement.setString(2, uuidAsSring);
             preparedStatement.setString(3, fileName);
@@ -202,7 +223,8 @@ public class Message implements IMessage {
     @Override
     public byte[] getFileFromDB(String uuid) throws IOException {
         byte[] b = null;
-        try (Connection connection = _dataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(_forGetFileFromDB)) {
+        try (Connection connection = _dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(_forGetFileFromDB)) {
             preparedStatement.setString(1, uuid);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs != null) {
