@@ -4,7 +4,7 @@ $(document).ready(function() {
 
 function doRegistrationForm() {
 	if (!($('#NameMember').length)) {
-		$('#PasswordMember').after('<tr id="NameMember"><td align="left">Your Name:</td><td align="left"><input type="text" maxlength="20" minlength="3" name="NameMember" required /></td></tr>');
+		$('#PasswordMember').after('<tr id="NameMember"><td align="left">Your Name:</td><td align="left"><input type="text" maxlength="20" minlength="8" name="NameMember" required /></td></tr>');
 	}
 	editURLOfFormaction("registration")
 }

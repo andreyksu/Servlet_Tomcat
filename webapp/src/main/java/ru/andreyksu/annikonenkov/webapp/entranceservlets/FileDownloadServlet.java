@@ -57,15 +57,17 @@ public class FileDownloadServlet extends HttpServlet {
             IMessage aMessageClass = new Message(_dataSource);
             byte[] arrayOfByteForFile = aMessageClass.getFileFromDB(uuidFromRequest);
 
+            /*
             try {
                 EmailWorker emailWorker = new EmailWorker(DataSourceProvider.getMailSession());
-                // emailWorker.sendEmail("andreyksu@gmail.com");
+                emailWorker.sendEmail("andreyksu@gmail.com");
                 emailWorker.getMessages();
                 emailWorker.getMessages("andreyksu@gmail.com");
             } catch (NamingException | MessagingException e) {
                 _log.error("В ходе работы с почтной возникли ошибки");
                 _log.catching(e);
             }
+            */
 
             if (arrayOfByteForFile != null) {
 
